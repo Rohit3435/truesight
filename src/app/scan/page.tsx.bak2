@@ -1,0 +1,261 @@
+"use client";
+
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, Upload, Link2, User, Globe, Loader2, AlertCircle, Shield, Search, Lock, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
+export default function ScanPage() {
+  const [name, setName] = useState("");
+  const [link, setLink] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [isConsent, setIsConsent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    // Basic validation
+    if (!name.trim()) {
+      setError("Please enter a name or username");
+      return;
+    }
+
+    if (!isConsent) {
+      setError("Please confirm that you agree to the Terms of Service");
+      return;
+    }
+
+    // Show loading state
+    setIsSubmitting(true);
+
+    // Simulate API call - in a real app this would be an actual API call
+    setTimeout(() => {
+      router.push("/scanning");
+    }, 1500);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-subtle">
+      {/* Animated background elements */}
+      <div className="absolute top-40 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+      
+      <div className="container mx-auto px-4 py-24">
+        <motion.div 
+          className="max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Header with navigation */}
+          <div className="mb-8 flex items-center">
+            <Link href="/" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Home
+            </Link>
+            <div className="ml-auto flex items-center space-x-4">
+              <Badge variant="outline" className="bg-primary/5">
+                <Shield className="h-3 w-3 mr-1" />
+                AI-Powered
+              </Badge>
+              <Badge variant="outline" className="bg-accent/5">
+                <Lock className="h-3 w-3 mr-1" />
+                Private & Secure
+              </Badge>
+            </div>
+          </div>
+
+          {/* Main card with form */}
+          <Card className="p-8 shadow-elegant border-primary/10 overflow-hidden relative">
+            {/* Accent circles */}
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full"></div>
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-accent/5 rounded-full"></div>
+            
+            <div className="relative z-10">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2">Start Your Profile Scan</h1>
+              <p className="text-muted-foreground text-lg mb-8">
+                Our AI analyzes public data to assess safety risks and authenticity.
+              </p>
+
+              {error && (
+                <div className="bg-destructive/10 text-destructive rounded-lg p-4 mb-6 flex items-center">
+                  <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <p>{error}</p>
+                </div>
+              )}
+
+              <motion.form 
+                onSubmit={handleSubmit}
+                className="space-y-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                {/* Name/Handle with animation */}
+                <motion.div 
+                  className="space-y-2"
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <label htmlFor="nameHandle" className="block text-sm font-medium">
+                    Name or Username <span className="text-destructive">*</span>
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="nameHandle"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter name or username"
+                      className="pl-10 border-2 focus:border-primary"
+                      required
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Full name or online handle of the person you want to analyze
+                  </p>
+                </motion.div>
+
+                {/* Profile Link with animation */}
+                <motion.div 
+                  className="space-y-2"
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <label htmlFor="profileLink" className="block text-sm font-medium">
+                    Profile Link (optional)
+                  </label>
+                  <div className="relative">
+                    <Link2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="profileLink"
+                      value={link}
+                      onChange={(e) => setLink(e.target.value)}
+                      placeholder="https://"
+                      className="pl-10"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Link to any social profile of the person
+                  </p>
+                </motion.div>
+
+                {/* Platform Selection with animation */}
+                <motion.div 
+                  className="space-y-2"
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <label htmlFor="platform" className="block text-sm font-medium">
+                    Platform
+                  </label>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <select 
+                      id="platform" 
+                      value={platform}
+                      onChange={(e) => setPlatform(e.target.value)}
+                      className="w-full h-10 pl-10 rounded-md border border-input bg-background ring-offset-background text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="">Select platform (or All)</option>
+                      <option value="twitter">Twitter/X</option>
+                      <option value="instagram">Instagram</option>
+                      <option value="facebook">Facebook</option>
+                      <option value="linkedin">LinkedIn</option>
+                      <option value="reddit">Reddit</option>
+                      <option value="tiktok">TikTok</option>
+                      <option value="all">All Platforms</option>
+                    </select>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Select which platform to focus on or choose "All Platforms"
+                  </p>
+                </motion.div>
+
+                {/* Consent Checkbox with animation */}
+                <motion.div 
+                  className="flex items-start space-x-3 pt-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  <input 
+                    id="consent" 
+                    type="checkbox" 
+                    checked={isConsent}
+                    onChange={(e) => setIsConsent(e.target.checked)}
+                    className="h-4 w-4 mt-1 border border-input rounded bg-background"
+                  />
+                  <label htmlFor="consent" className="text-sm">
+                    I confirm that this scan uses only publicly available data and complies with
+                    <Link href="/terms" className="text-primary hover:underline ml-1">
+                      Terms of Service
+                    </Link>.
+                  </label>
+                </motion.div>
+
+                {/* Action Buttons with animation */}
+                <motion.div 
+                  className="flex flex-col sm:flex-row gap-3 pt-4"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                >
+                  <Button 
+                    type="submit" 
+                    className="flex-1 bg-primary hover:bg-primary/90 text-lg py-6"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Preparing Scan...
+                      </>
+                    ) : (
+                      <>
+                        <Search className="h-4 w-4 mr-2" />
+                        Start Scan Now
+                      </>
+                    )}
+                  </Button>
+                  <Button variant="outline" type="button" className="flex-1" asChild>
+                    <Link href="/">
+                      Cancel
+                    </Link>
+                  </Button>
+                </motion.div>
+              </motion.form>
+            </div>
+          </Card>
+
+          {/* Feature cards */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {["Deep Analysis", "Multiple Sources", "AI-Powered Insights"].map((feature, i) => (
+              <motion.div
+                key={feature}
+                className="bg-card border border-border p-4 rounded-xl shadow-sm text-center"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.9 + (i * 0.1) }}
+              >
+                <p className="font-medium">{feature}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}

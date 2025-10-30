@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768">
+  <defs>
+    <linearGradient id="eye-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00c2ff" />
+      <stop offset="100%" stop-color="#00ff8f" />
+    </linearGradient>
+  </defs>
+  <path fill="#0c1b44" d="M384,181c-149.41,0-271.87,111-283.35,254.51C111.85,565,238.15,599,384,599c145.68,0,272.14-34,283.4-163.31C655.91,292,533.45,181,384,181Z"/>
+  <circle cx="384" cy="390" r="110" fill="#ffffff"/>
+  <circle cx="384" cy="390" r="85" fill="#0c1b44"/>
+  <circle cx="384" cy="390" r="50" fill="url(#eye-gradient)"/>
+  <circle cx="384" cy="390" r="25" fill="#ffffff"/>
+  <g fill="url(#eye-gradient)">
+    <circle cx="236" cy="260" r="10"/>
+    <circle cx="532" cy="260" r="10"/>
+    <circle cx="170" cy="350" r="8"/>
+    <circle cx="598" cy="350" r="8"/>
+    <circle cx="210" cy="450" r="12"/>
+    <circle cx="558" cy="450" r="12"/>
+    <circle cx="290" cy="520" r="10"/>
+    <circle cx="478" cy="520" r="10"/>
+  </g>
+  <g fill="none" stroke="url(#eye-gradient)" stroke-width="3">
+    <path d="M236,260 L280,300"/>
+    <path d="M532,260 L488,300"/>
+    <path d="M170,350 L230,370"/>
+    <path d="M598,350 L538,370"/>
+    <path d="M210,450 L270,430"/>
+    <path d="M558,450 L498,430"/>
+    <path d="M290,520 L340,460"/>
+    <path d="M478,520 L428,460"/>
+  </g>
+</svg>
