@@ -1,4 +1,6 @@
-export const aurauiMotion = {
+import type { Variants } from "framer-motion";
+
+export const aurauiMotion: { container: Variants; item: Variants } = {
   container: {
     hidden: { opacity: 0 },
     visible: {
