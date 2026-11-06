@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignupRedirectPage() {
+function SignupRedirectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -29,5 +29,13 @@ export default function SignupRedirectPage() {
         <p className="mt-4 text-lg text-purple-800">Redirecting to signup...</p>
       </div>
     </div>
+  );
+}
+
+export default function SignupRedirectPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignupRedirectContent />
+    </Suspense>
   );
 }
