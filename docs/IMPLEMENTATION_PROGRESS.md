@@ -16,8 +16,9 @@
 - Removed the unused legacy Gemini wrapper, including its source-embedded credential, fabricated fallback scores, sensitive identity/mental-health prompts, and sample data.
 - Added typed Instagram and LinkedIn username/profile URL normalization in `src/lib/profile-input.ts`. This validates syntax and canonicalizes URLs; it does not imply profile availability or start collection.
 - The provider credential still needs revocation/rotation by the account owner. Removing it from the current source does not remove it from prior Git history; history rewriting is prohibited by the project instructions.
-- `git diff --check` completed. TypeScript and ESLint checks could not run because dependencies are not installed, and PowerShell blocked the `npx.ps1` shim. No test framework is configured yet.
-- Commit and push for this phase are pending.
+- Added Node built-in tests for valid and invalid Instagram/LinkedIn URLs, usernames, blank input, and unsupported hosts. `node --experimental-strip-types --test tests/profile-input.test.mjs` passed (6/6).
+- `git diff --check` completed. TypeScript, ESLint, and production build checks could not run because project dependencies are not installed; PowerShell also blocked the `npx.ps1` shim.
+- Foundation commit: `7018432` (`feat: add safe profile input normalization`), pushed successfully to `origin/feature/truesight-functional-upgrade`. Test and progress updates are being committed separately.
 
 ## Next
 
