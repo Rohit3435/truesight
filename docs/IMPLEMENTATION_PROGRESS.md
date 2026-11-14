@@ -35,9 +35,10 @@
 - Added a server-side Gemini multimodal structured-output adapter, explicit Groq/Ollama text adapters, a provider factory with no silent failover, and a Hugging Face classifier/agent guarded by explicit external-provider consent.
 - Added `.env.example`, integration decisions and boundaries in `docs/INTEGRATIONS.md`, and mocked provider tests. These provider APIs have not been live-tested because no account credentials/local Ollama service are configured.
 - VirusTotal, URLScan, Sherlock, ExifTool, and LangGraph are documented with their integration boundaries and remain deferred. Public OSINT checks that risk disclosing submitted data or breaching use limits remain disabled pending product privacy and license configuration.
-- The expanded test suite passed (19/19), and lint/TypeScript checks passed. Provider adapter commits `44e8c1b` and `bff5223` are pushed to the development branch.
+- The expanded test suite passed (22/22), and lint/TypeScript checks passed. Provider adapter commits `44e8c1b` and `bff5223` are pushed to the development branch.
 - Added Playwright Test as a dev dependency, a Chromium configuration, and two browser smoke tests. `npm run test:e2e -- --workers=1` passed (2/2) after waiting for the dev server's initial route compilation. Test output is ignored by Git.
-- Connected the selected model adapter to an evidence-observation agent that requires explicit external-provider consent, limits text volume, validates exact quotes against cited evidence, and marks output for review. Its mocked test and updates are pending commit.
+- Connected the selected model adapter to an evidence-observation agent that requires explicit external-provider consent, limits text volume, validates exact quotes against cited evidence, and marks output for review. Commit `e5cd7dc` is pushed.
+- Added a VirusTotal lookup-only adapter that refuses public-tier configuration, plus a consent-gated URLScan adapter that submits only private scans of HTTPS public DNS targets. Both have mocked tests only; neither has live credentials. These changes are pending commit.
 
 ## Next
 

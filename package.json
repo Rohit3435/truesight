@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test tests/profile-input.test.mjs tests/orchestrator.test.mjs tests/gemini-provider.test.mjs tests/optional-providers.test.mjs",
+    "test": "node --experimental-strip-types --test tests/profile-input.test.mjs tests/orchestrator.test.mjs tests/gemini-provider.test.mjs tests/optional-providers.test.mjs tests/osint-integrations.test.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
