@@ -23,6 +23,10 @@ export class GroqProvider implements TextModelProvider {
     this.timeoutMs = options.timeoutMs ?? 30_000;
   }
 
+  isConfigured(): boolean {
+    return Boolean(this.apiKey && this.modelName);
+  }
+
   async generateStructured<T>(request: StructuredGenerationRequest<T>): Promise<T> {
     if (!this.apiKey || !this.modelName) {
       throw new ProviderUnavailableError("Groq requires server-side GROQ_API_KEY and GROQ_MODEL configuration.");

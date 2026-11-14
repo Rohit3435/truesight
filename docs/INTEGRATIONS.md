@@ -4,7 +4,7 @@ This document distinguishes implemented code from evaluated/deferred tools. A pr
 
 ## Implemented: Gemini primary model adapter
 
-`src/lib/providers/gemini.ts` calls Gemini's structured `generateContent` endpoint from server-side code. It supports text plus bounded JPEG/PNG/WebP/GIF inline images, sends the API key in `x-goog-api-key`, requests JSON Schema output, applies a timeout, maps provider errors to credential-safe messages, and requires a caller-supplied runtime validator before returning a typed result.
+`src/lib/providers/gemini.ts` calls Gemini's structured `generateContent` endpoint from server-side code. It supports text plus bounded JPEG/PNG/WebP/GIF inline images, sends the API key in `x-goog-api-key`, requests JSON Schema output, applies a timeout, maps provider errors to credential-safe messages, and requires a caller-supplied runtime validator before returning a typed result. The evidence-observation agent is connected to this abstraction, but does not run unless the investigation records explicit external-provider consent and the selected provider is configured.
 
 Configuration is in `.env.example`: `GEMINI_API_KEY` and `GEMINI_MODEL`. The default model is `gemini-3.5-flash-lite`; override it after checking current availability and pricing. No key was available for a live request during implementation. Mocked tests cover missing-key behavior, multimodal request shape, HTTP failure, and runtime output validation. The adapter is not yet wired into the investigation agents or route flow.
 

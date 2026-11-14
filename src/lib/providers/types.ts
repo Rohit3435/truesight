@@ -15,6 +15,7 @@ export interface StructuredGenerationRequest<T> {
 export interface TextModelProvider {
   readonly providerName: string;
   readonly modelName: string;
+  isConfigured?(): boolean;
   generateStructured<T>(request: StructuredGenerationRequest<T>): Promise<T>;
 }
 

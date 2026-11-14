@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { orchestrateInvestigation } from "../src/lib/agents/orchestrator.ts";
 import { ToxicityLanguageAgent } from "../src/lib/agents/toxicity-language.ts";
+import { EvidenceObservationAgent } from "../src/lib/agents/evidence-observation.ts";
 
 const baseContext = {
   investigationId: "inv-1",
@@ -100,4 +101,41 @@ test("classifier agent requires explicit external consent and preserves model la
   assert.equal(output.findings[0].modelOutput.label, "toxicity");
   assert.equal(output.findings[0].modelOutput.probability, 0.73);
   assert.equal(output.findings[0].verification, "requires_review");
+});
+
+test("model evidence agent requires consent and drops quotes absent from source evidence", async () => {
+  let calls = 0;
+  const provider = {
+    providerName: "gemini",
+    modelName: "test-model",
+    isConfigured: () => true,
+    generateStructured: async (request) => {
+      calls += 1;
+      return request.validate({ observations: [
+        { evidenceId: "profile-1", quote: "Developer at Example", observation: "The supplied text states a developer role." },
+        { evidenceId: "profile-1", quote: "Invented quote", observation: "Unsupported." },
+      ] });
+    },
+  };
+  const agent = new EvidenceObservationAgent(provider);
+  const context = {
+    ...baseContext,
+    evidence: [{
+      id: "profile-1",
+      platform: "linkedin",
+      kind: "profile",
+      content: "Headline: Developer at Example",
+      source: "user_provided",
+      sourceLabel: "Copied profile text",
+      collectedAt: "2026-11-15T00:00:00.000Z",
+    }],
+  };
+  assert.equal(agent.canRun(context), false);
+  assert.equal(calls, 0);
+  const output = await agent.run({ ...context, externalProviderConsent: true });
+  assert.equal(calls, 1);
+  assert.equal(output.findings.length, 1);
+  assert.equal(output.findings[0].evidenceQuote, "Developer at Example");
+  assert.equal(output.findings[0].verification, "requires_review");
+  assert.equal(output.provider, "gemini");
 });

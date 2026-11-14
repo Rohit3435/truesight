@@ -30,10 +30,11 @@ The orchestrator runs eligible independent agents concurrently with `Promise.all
 - **Content intelligence:** extracts literal hashtags from supplied captions. It does not infer sentiment, toxicity, intent, or personal traits.
 - **Professional intelligence:** records supplied experience, education, skill, or certification material as unverified claims.
 - **Toxicity/language classification:** optionally sends up to five supplied captions to the configured Hugging Face classifier only when the investigation explicitly records external-provider consent. It preserves model labels/probabilities as model output and marks them for human review; it does not infer a trait or risk score about the person.
+- **Evidence observation:** optionally uses the explicitly selected Gemini, Groq, or local Ollama provider after external-provider consent. It has a strict evidence/text limit, requires exact quotes from cited evidence, drops outputs without a matching source quote, and marks accepted observations for review.
 - **Evidence verification:** checks evidence references and preserves review status for user-provided material.
 - **Investigation orchestration:** routes by evidence availability, isolates failures, and assembles the report.
 
-Gemini image analysis, Gemini-powered specialist agents/report generation, external URL reputation checks, and username cross-source search are not implemented. They must not be described as completed agents until the required model/provider access and safe external-service boundaries are implemented. Hugging Face predictions are optional and have only been tested with mocked provider responses, not a live key.
+Gemini image analysis, LLM report generation, external URL reputation checks, and username cross-source search are not implemented. The text evidence agent is wired to the provider abstraction but has only been tested with mocked model responses; no provider has been live-tested. Hugging Face predictions are also only tested with mocked responses, not a live key.
 
 ## Evidence and confidence
 

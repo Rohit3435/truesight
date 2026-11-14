@@ -38,6 +38,7 @@ export interface Finding {
   title: string;
   observation: string;
   evidenceIds: string[];
+  evidenceQuote?: string;
   confidence: Confidence;
   verification: "supported" | "requires_review";
   modelOutput?: {
@@ -54,6 +55,8 @@ export interface AgentOutput {
   summary: string;
   findings: Finding[];
   limitations: string[];
+  provider?: string;
+  model?: string;
   error?: string;
 }
 

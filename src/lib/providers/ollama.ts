@@ -24,6 +24,10 @@ export class OllamaProvider implements TextModelProvider {
     validateLocalUrl(this.baseUrl);
   }
 
+  isConfigured(): boolean {
+    return Boolean(this.modelName);
+  }
+
   async generateStructured<T>(request: StructuredGenerationRequest<T>): Promise<T> {
     if (!this.modelName) throw new ProviderUnavailableError("Ollama requires OLLAMA_MODEL and a locally installed model.");
     if (request.images?.length) throw new ProviderUnavailableError("This Ollama adapter supports text only.");

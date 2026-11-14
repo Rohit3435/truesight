@@ -37,6 +37,10 @@ export class GeminiProvider implements TextModelProvider {
     this.timeoutMs = options.timeoutMs ?? 30_000;
   }
 
+  isConfigured(): boolean {
+    return Boolean(this.apiKey);
+  }
+
   async generateStructured<T>(request: StructuredGenerationRequest<T>): Promise<T> {
     if (!this.apiKey) {
       throw new ProviderUnavailableError("Gemini is not configured. Set GEMINI_API_KEY on the server.");

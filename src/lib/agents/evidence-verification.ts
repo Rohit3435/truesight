@@ -7,6 +7,7 @@ export function verifyAgentFindings(outputs: AgentOutput[], evidence: EvidenceRe
     const findings: Finding[] = output.findings.flatMap((finding) => {
       const sourcesExist = finding.evidenceIds.length > 0 && finding.evidenceIds.every((id) => evidenceById.has(id));
       if (!sourcesExist) return [];
+      if (finding.evidenceQuote && !finding.evidenceIds.some((id) => evidenceById.get(id)?.content.includes(finding.evidenceQuote!))) return [];
       const includesUserEvidence = finding.evidenceIds.some((id) => evidenceById.get(id)?.source === "user_provided");
       return [{
         ...finding,
