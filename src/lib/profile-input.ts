@@ -34,7 +34,7 @@ export function normalizeProfileInput(
   platform: SocialPlatform,
   input: string,
 ): NormalizedProfileInput {
-  if (!(platform in USERNAME_PATTERNS)) {
+  if (!Object.prototype.hasOwnProperty.call(USERNAME_PATTERNS, platform)) {
     throw new ProfileInputError("Choose Instagram or LinkedIn.");
   }
 
@@ -52,6 +52,9 @@ export function normalizeProfileInput(
 
     if (url.protocol !== "https:" && url.protocol !== "http:") {
       throw new ProfileInputError("Only web profile URLs are supported.");
+    }
+    if (url.username || url.password || url.port) {
+      throw new ProfileInputError("Profile URLs must not contain credentials or a custom port.");
     }
     if (!PROFILE_HOSTS[platform].includes(url.hostname.toLowerCase())) {
       throw new ProfileInputError(`Enter a ${platform} profile URL.`);

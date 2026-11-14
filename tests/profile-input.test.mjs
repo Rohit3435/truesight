@@ -26,6 +26,10 @@ test("rejects Instagram post URLs and unsupported hosts", () => {
     () => normalizeProfileInput("instagram", "https://instagram.com.attacker.example/user"),
     ProfileInputError,
   );
+  assert.throws(
+    () => normalizeProfileInput("instagram", "https://user:pass@instagram.com/user"),
+    ProfileInputError,
+  );
 });
 
 test("normalizes a LinkedIn public profile URL", () => {
@@ -51,4 +55,5 @@ test("rejects blank and malformed usernames", () => {
   assert.throws(() => normalizeProfileInput("instagram", "  "), ProfileInputError);
   assert.throws(() => normalizeProfileInput("instagram", "invalid/name"), ProfileInputError);
   assert.throws(() => normalizeProfileInput("linkedin", "ab"), ProfileInputError);
+  assert.throws(() => normalizeProfileInput("toString", "sample"), ProfileInputError);
 });

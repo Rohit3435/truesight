@@ -20,6 +20,14 @@
 - `git diff --check` completed. TypeScript, ESLint, and production build checks could not run because project dependencies are not installed; PowerShell also blocked the `npx.ps1` shim.
 - Foundation commit: `7018432` (`feat: add safe profile input normalization`), pushed successfully to `origin/feature/truesight-functional-upgrade`. Test and progress updates are being committed separately.
 
+## Phase 4 — Evidence-first agent foundation (in progress)
+
+- Added typed investigation/evidence/report contracts and explicit Instagram/LinkedIn collectors that report unavailable without authorized access; neither attempts scraping or access-control bypass.
+- Added conditional profile, caption, and LinkedIn professional evidence agents, evidence-reference verification, and concurrent orchestration with per-agent failure isolation. These are deterministic extraction modules, not LLM agents; model-dependent analysis remains unavailable until an approved provider is configured.
+- Added the multi-agent architecture guide and tests for skipped agents, source traceability, unsupported claim removal, and isolated failure.
+- `npm.cmd test` passed (9/9). `git diff --check` passed. TypeScript/ESLint/build remain unavailable because dependencies are not installed.
+- Commit and push for this phase are pending.
+
 ## Next
 
 Proceed with the secure foundation phase. The embedded Gemini credential identified by the audit should be treated as compromised and rotated by its owner.
