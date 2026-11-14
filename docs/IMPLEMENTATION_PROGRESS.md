@@ -39,6 +39,8 @@
 - Added Playwright Test as a dev dependency, a Chromium configuration, and two browser smoke tests. `npm run test:e2e -- --workers=1` passed (2/2) after waiting for the dev server's initial route compilation. Test output is ignored by Git.
 - Connected the selected model adapter to an evidence-observation agent that requires explicit external-provider consent, limits text volume, validates exact quotes against cited evidence, and marks output for review. Commit `e5cd7dc` is pushed.
 - Added a VirusTotal lookup-only adapter that refuses public-tier configuration, plus a consent-gated URLScan adapter that submits only private scans of HTTPS public DNS targets. Both have mocked tests only; neither has live credentials. These changes are pending commit.
+- `npm test` passed (22/22), `npm run lint` passed, TypeScript passed, and the production build passed. Playwright passed (2/2). The build still reports stale Browserslist data; it does not affect build success.
+- OSINT adapter commit `1d38c01` is pushed to the development branch.
 
 ## Next
 
