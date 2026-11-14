@@ -29,10 +29,11 @@ The orchestrator runs eligible independent agents concurrently with `Promise.all
 - **Profile intelligence:** reports the presence of profile text and states that it is an unverified claim.
 - **Content intelligence:** extracts literal hashtags from supplied captions. It does not infer sentiment, toxicity, intent, or personal traits.
 - **Professional intelligence:** records supplied experience, education, skill, or certification material as unverified claims.
+- **Toxicity/language classification:** optionally sends up to five supplied captions to the configured Hugging Face classifier only when the investigation explicitly records external-provider consent. It preserves model labels/probabilities as model output and marks them for human review; it does not infer a trait or risk score about the person.
 - **Evidence verification:** checks evidence references and preserves review status for user-provided material.
 - **Investigation orchestration:** routes by evidence availability, isolates failures, and assembles the report.
 
-Image analysis, language/toxicity analysis, external URL reputation checks, username cross-source search, and LLM report generation are not implemented. They must not be described as completed agents until the required model/provider access and safe external-service boundaries are implemented.
+Gemini image analysis, Gemini-powered specialist agents/report generation, external URL reputation checks, and username cross-source search are not implemented. They must not be described as completed agents until the required model/provider access and safe external-service boundaries are implemented. Hugging Face predictions are optional and have only been tested with mocked provider responses, not a live key.
 
 ## Evidence and confidence
 

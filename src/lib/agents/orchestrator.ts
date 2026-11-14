@@ -3,6 +3,7 @@ import type { InvestigationAgent } from "./agent.ts";
 import { ContentIntelligenceAgent } from "./content-intelligence.ts";
 import { ProfileIntelligenceAgent } from "./profile-intelligence.ts";
 import { ProfessionalIntelligenceAgent } from "./professional-intelligence.ts";
+import { ToxicityLanguageAgent } from "./toxicity-language.ts";
 import { verifyAgentFindings } from "./evidence-verification.ts";
 
 /**
@@ -15,6 +16,7 @@ export async function orchestrateInvestigation(
     new ProfileIntelligenceAgent(),
     new ContentIntelligenceAgent(),
     new ProfessionalIntelligenceAgent(),
+    new ToxicityLanguageAgent(),
   ],
 ): Promise<InvestigationReport> {
   const eligible = agents.filter((agent) => agent.canRun(context));

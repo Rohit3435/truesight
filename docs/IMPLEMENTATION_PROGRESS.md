@@ -30,6 +30,13 @@
 - Installed the locked dependencies with `npm ci` for validation. Fixed the existing Next.js 14 ESLint preset reference, typed the shared Framer Motion variants, and wrapped the login/signup `useSearchParams` consumers in Suspense so routes can prerender.
 - `npm run lint` passed, `tsc --noEmit --incremental false` passed, and `npm run build` passed with the permitted font network access. The build reported stale Browserslist data; no update was applied.
 
+## AI and OSINT stack evaluation (in progress)
+
+- Added a server-side Gemini multimodal structured-output adapter, explicit Groq/Ollama text adapters, a provider factory with no silent failover, and a Hugging Face classifier/agent guarded by explicit external-provider consent.
+- Added `.env.example`, integration decisions and boundaries in `docs/INTEGRATIONS.md`, and mocked provider tests. These provider APIs have not been live-tested because no account credentials/local Ollama service are configured.
+- VirusTotal, URLScan, Sherlock, ExifTool, LangGraph, and Playwright are documented with their integration boundaries; they are not currently integrated. Public OSINT checks that risk disclosing submitted data or breaching use limits remain disabled pending product privacy and license configuration.
+- The expanded test suite, lint, and TypeScript checks passed (18/18 tests). Provider changes are not yet committed/pushed.
+
 ## Next
 
 Proceed with the secure foundation phase. The embedded Gemini credential identified by the audit should be treated as compromised and rotated by its owner.

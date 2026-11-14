@@ -25,6 +25,8 @@ export interface InvestigationContext {
   username: string;
   profileUrl: string;
   evidence: EvidenceRecord[];
+  /** External model calls are disabled unless the caller records explicit consent. */
+  externalProviderConsent?: boolean;
 }
 
 export type AgentStatus = "completed" | "skipped" | "failed";
@@ -38,6 +40,12 @@ export interface Finding {
   evidenceIds: string[];
   confidence: Confidence;
   verification: "supported" | "requires_review";
+  modelOutput?: {
+    provider: string;
+    model: string;
+    label: string;
+    probability: number;
+  };
 }
 
 export interface AgentOutput {

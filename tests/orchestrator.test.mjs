@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { orchestrateInvestigation } from "../src/lib/agents/orchestrator.ts";
+import { ToxicityLanguageAgent } from "../src/lib/agents/toxicity-language.ts";
 
 const baseContext = {
   investigationId: "inv-1",
@@ -66,4 +67,37 @@ test("isolates agent failure and removes unsupported findings", async () => {
   );
   assert.equal(report.agents.find((agent) => agent.agent === "broken-agent").status, "failed");
   assert.equal(report.findings.length, 0);
+});
+
+test("classifier agent requires explicit external consent and preserves model labels", async () => {
+  let calls = 0;
+  const classifier = {
+    providerName: "huggingface",
+    modelName: "unitary/toxic-bert",
+    isConfigured: () => true,
+    classify: async () => {
+      calls += 1;
+      return [{ label: "toxicity", score: 0.73 }];
+    },
+  };
+  const agent = new ToxicityLanguageAgent(classifier);
+  const context = {
+    ...baseContext,
+    evidence: [{
+      id: "caption-1",
+      platform: "instagram",
+      kind: "caption",
+      content: "Example caption",
+      source: "user_provided",
+      sourceLabel: "User supplied text",
+      collectedAt: "2026-11-15T00:00:00.000Z",
+    }],
+  };
+  assert.equal(agent.canRun(context), false);
+  assert.equal(calls, 0);
+  const output = await agent.run({ ...context, externalProviderConsent: true });
+  assert.equal(calls, 1);
+  assert.equal(output.findings[0].modelOutput.label, "toxicity");
+  assert.equal(output.findings[0].modelOutput.probability, 0.73);
+  assert.equal(output.findings[0].verification, "requires_review");
 });

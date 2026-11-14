@@ -1,0 +1,41 @@
+# AI and OSINT Integrations
+
+This document distinguishes implemented code from evaluated/deferred tools. A provider is not considered operational until it has been exercised against that provider with valid credentials; unit tests use mocked HTTP responses and do not make that claim.
+
+## Implemented: Gemini primary model adapter
+
+`src/lib/providers/gemini.ts` calls Gemini's structured `generateContent` endpoint from server-side code. It supports text plus bounded JPEG/PNG/WebP/GIF inline images, sends the API key in `x-goog-api-key`, requests JSON Schema output, applies a timeout, maps provider errors to credential-safe messages, and requires a caller-supplied runtime validator before returning a typed result.
+
+Configuration is in `.env.example`: `GEMINI_API_KEY` and `GEMINI_MODEL`. The default model is `gemini-3.5-flash-lite`; override it after checking current availability and pricing. No key was available for a live request during implementation. Mocked tests cover missing-key behavior, multimodal request shape, HTTP failure, and runtime output validation. The adapter is not yet wired into the investigation agents or route flow.
+
+Google's current documentation recommends the Interactions API for new agentic workflows and lists multimodal input and structured output there. This implementation uses the established `generateContent` endpoint because its request/response shape is simpler for a single stateless JSON task and is explicitly still supported. Revisit Interactions when durable background execution or streamed model steps are needed. [Gemini API overview](https://ai.google.dev/gemini-api/docs/interactions-overview), [Gemini REST authentication](https://ai.google.dev/gemini-api/docs/api-key), [structured output](https://ai.google.dev/gemini-api/docs/structured-output), [model list](https://ai.google.dev/gemini-api/docs/models).
+
+## Implemented optional providers
+
+- **Groq text generation adapter:** explicit `AI_PROVIDER=groq` selection, server key/model configuration, JSON-mode responses followed by runtime validation, and no image support or silent Gemini failover. Unit tests mock the HTTP response; live service use is unverified.
+- **Ollama local text adapter:** explicit `AI_PROVIDER=ollama`, requires a configured model, and restricts the endpoint to local loopback to prevent user-controlled server-side requests. Unit tests mock the local response; a local Ollama service/model is not installed or live-tested.
+- **Hugging Face text classification adapter and agent:** preserves the selected model's labels/probabilities. The agent only runs when `HF_TOKEN` is configured and the investigation context records explicit external-provider consent. It classifies at most five caption items per run, keeps each prediction tied to its evidence ID, and marks output for review. Tests mock the endpoint; live classification is unverified. See [Hugging Face text classification](https://huggingface.co/docs/inference-providers/tasks/text-classification) and the [unitary/toxic-bert model card](https://huggingface.co/unitary/toxic-bert).
+
+The shared provider factory selects Gemini by default and Groq/Ollama only through `AI_PROVIDER`. It never silently routes user evidence to another vendor. Configuration examples are in `.env.example`.
+
+## Evaluated integrations
+
+| Tool | Decision | Reason and activation boundary |
+| --- | --- | --- |
+| **Groq** | Defer as optional text provider | Its OpenAI-compatible API is suitable for low-latency text work, but the provider abstraction and actual Gemini agent use should land first. Do not silently switch providers because that changes processing location/model behavior. Add an explicit provider selection and credentials later. [Official API compatibility](https://console.groq.com/docs/openai). |
+| **Hugging Face Inference** | Optional adapter implemented; live verification pending | It provides text-classification tasks and model-specific labels/probabilities. A model probability is not a universal toxicity or risk score; model, label mapping, language limits, and evidence citation need explicit evaluation first. [Text classification API](https://huggingface.co/docs/inference-providers/tasks/text-classification), [HF Inference provider](https://huggingface.co/docs/inference-providers/providers/hf-inference). |
+| **Ollama** | Optional local adapter implemented; live verification pending | Useful for a local/private development mode when a developer has installed and pulled a compatible model. A localhost service is not available on hosted deployments by default. The adapter restricts HTTP requests to loopback and requires explicit model configuration. |
+| **LangGraph** | Defer for now | The current workflow is a small set of independent, evidence-gated steps. The typed orchestrator already isolates failures. LangGraph becomes useful when durable checkpoints, resumable jobs, human interrupts, or richer branching are backed by the selected database/worker. Introducing an in-memory graph now would not solve persistence. [LangGraph workflow design](https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph). |
+| **VirusTotal** | Do not enable the public API by default | The public API is documented as 4 requests/minute and 500/day and cannot be used in commercial products/services. The product's commercial status is not established. A later adapter must be disabled without an eligible key/license, rate-limit requests, and perform reputation lookups only; submissions need separate explicit consent. [Public vs Premium API](https://docs.virustotal.com/reference/public-vs-premium-api), [URL reference](https://docs.virustotal.com/reference/url). |
+| **URLScan.io** | Defer until explicit consent/visibility is designed | A submitted URL/site scan may expose the URL and scan data. Use private visibility for sensitive URLs, make submission opt-in, avoid auto-scanning profile links, and handle quotas/429 responses. No API key or scan submission is configured. [Visibility levels](https://docs.urlscan.io/pages/visibility), [API best practices](https://docs.urlscan.io/pages/api-best-practices), [API endpoints](https://docs.urlscan.io/apis/urlscan-openapi/section/introduction). |
+| **Sherlock** | Do not run in the web request path | It probes many third-party sites, can trigger their controls, and a username hit is not identity evidence. If added, it should be a separately operated, opt-in, rate-limited worker with an allowlist, source attribution, and a clear warning that matches are candidates only. [Project purpose and matching method](https://github.com/sherlock-project/sherlock/wiki). |
+| **ExifTool** | Defer to an isolated evidence-processing worker | Metadata can include sensitive location/device details. Never use it to identify a person; only inspect files a user is authorized to submit, disclose extracted fields, and keep metadata out of public reports by default. A command-line binary is not safe to invoke from an unauthenticated Next.js request without upload controls and process isolation. [ExifTool documentation](https://exiftool.org/). |
+| **Playwright** | Appropriate for end-to-end UI tests | Playwright supports Chromium, Firefox, and WebKit. Add it when the investigation screens and server flows are wired so browser tests assert real behavior. The current project has unit tests and a passing production build, but Playwright is not installed or configured yet. [Playwright Test](https://playwright.dev/docs/intro). |
+
+## Data handling requirements
+
+- Third-party model or reputation calls must be explicit in the investigation record, including provider, model, timestamp, result status, and limitations.
+- Never include API keys in client code, URL query strings, prompts, report evidence, or logs.
+- Do not send screenshots, profile text, or URLs to an external provider without a clear product disclosure and user action appropriate to the data.
+- A model may summarize supplied evidence, but evidence IDs and source attribution must be verified in application code. Model output alone is not verification.
+- Missing configuration returns a clear unavailable result. No integration may return fabricated scores or synthetic successful findings.
