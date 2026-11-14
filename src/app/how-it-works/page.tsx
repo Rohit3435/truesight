@@ -36,7 +36,7 @@ export default function HowItWorksPage() {
       id: 1,
       title: "Enter Profile Information",
       description:
-        "Provide a name, username, social media handle, or upload a photo to begin the scanning process.",
+        "Select a supported platform, enter a username, and provide relevant text. Image upload is optional.",
       icon: <Search className="h-12 w-12 text-pink-500" />,
       bgColor: "bg-pink-100",
       iconBg: "bg-pink-500/10",
@@ -46,7 +46,7 @@ export default function HowItWorksPage() {
       id: 2,
       title: "AI + OSINT Scan",
       description:
-        "Our AI collects and analyzes publicly available information from across the web using OSINT techniques.",
+        "Choose Instagram or LinkedIn and provide the profile material you are authorized to submit. TrueSight does not fetch profile pages automatically.",
       icon: <Database className="h-12 w-12 text-purple-500" />,
       bgColor: "bg-purple-100",
       iconBg: "bg-purple-500/10",
@@ -56,7 +56,7 @@ export default function HowItWorksPage() {
       id: 3,
       title: "Behavior Analysis",
       description:
-        "Advanced algorithms detect patterns related to authenticity, toxicity, and potential safety risks.",
+        "Applicable evidence-based checks run on the material you submitted. Model-based analysis is skipped unless an external provider is configured and you opt in.",
       icon: <Cpu className="h-12 w-12 text-purple-700" />,
       bgColor: "bg-purple-100",
       iconBg: "bg-purple-700/10",
@@ -66,7 +66,7 @@ export default function HowItWorksPage() {
       id: 4,
       title: "Results Dashboard",
       description:
-        "Review a comprehensive report with safety scores, evidence, and actionable recommendations.",
+        "Review source-linked observations, analysis status, and limitations. The report does not assign a safety score or verify identity.",
       icon: <BarChart className="h-12 w-12 text-pink-600" />,
       bgColor: "bg-pink-100",
       iconBg: "bg-pink-600/10",
@@ -137,11 +137,12 @@ export default function HowItWorksPage() {
               </Link>
             </Button>
             <Button 
+              asChild
               variant="outline" 
               className="border-purple-300 text-purple-800 hover:bg-purple-100 px-8 py-6 rounded-xl"
               size="lg"
             >
-              Watch Demo Video
+              <Link href="/scan">Start an evidence review</Link>
             </Button>
           </motion.div>
         </motion.div>
@@ -214,7 +215,7 @@ export default function HowItWorksPage() {
               Our Technology Stack
             </h2>
             <p className="text-purple-700 max-w-2xl mx-auto">
-              TrueSight combines cutting-edge technologies to deliver accurate and comprehensive profile assessments
+              TrueSight reports only observations supported by the material submitted for each review.
             </p>
           </motion.div>
           
@@ -234,29 +235,28 @@ export default function HowItWorksPage() {
               <div className="h-14 w-14 bg-purple-100 rounded-full mb-6 flex items-center justify-center">
                 <Search className="h-7 w-7 text-purple-700" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-purple-900">Advanced OSINT</h3>
+              <h3 className="text-xl font-bold mb-4 text-purple-900">Submitted material</h3>
               <p className="text-purple-700 mb-6">
-                We ethically gather publicly available information using Open Source Intelligence techniques
-                to create a comprehensive profile.
+                You provide the text and optional image to review. Automated collection is unavailable until an authorized source is configured.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Social media analysis</span>
+                  <span className="text-purple-800">Profile text and captions</span>
                 </li>
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Public records search</span>
+                  <span className="text-purple-800">Professional details</span>
                 </li>
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Digital footprint mapping</span>
+                  <span className="text-purple-800">Optional image evidence</span>
                 </li>
               </ul>
             </motion.div>
@@ -270,29 +270,28 @@ export default function HowItWorksPage() {
               <div className="h-14 w-14 bg-purple-100 rounded-full mb-6 flex items-center justify-center">
                 <Cpu className="h-7 w-7 text-purple-700" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-purple-900">AI Analysis</h3>
+              <h3 className="text-xl font-bold mb-4 text-purple-900">Evidence analysis</h3>
               <p className="text-purple-700 mb-6">
-                Our custom AI models process and analyze data to detect patterns and behaviors that 
-                might indicate potential risks.
+                Deterministic checks report limited details found in the supplied content. External model analysis only runs after explicit consent and when configured.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Sentiment analysis</span>
+                  <span className="text-purple-800">Literal content observations</span>
                 </li>
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Behavior pattern detection</span>
+                  <span className="text-purple-800">Source-linked findings</span>
                 </li>
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Language processing</span>
+                  <span className="text-purple-800">Skipped or unavailable steps are shown</span>
                 </li>
               </ul>
             </motion.div>
@@ -306,29 +305,28 @@ export default function HowItWorksPage() {
               <div className="h-14 w-14 bg-purple-100 rounded-full mb-6 flex items-center justify-center">
                 <BarChart className="h-7 w-7 text-purple-700" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-purple-900">Safety Metrics</h3>
+              <h3 className="text-xl font-bold mb-4 text-purple-900">Report contents</h3>
               <p className="text-purple-700 mb-6">
-                We evaluate multiple dimensions of online safety to provide a comprehensive view of 
-                potential risks.
+                The report records what was submitted and which evidence-based checks ran. It does not evaluate a person's safety or identity.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Identity verification score</span>
+                  <span className="text-purple-800">Evidence source list</span>
                 </li>
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Toxicity assessment</span>
+                  <span className="text-purple-800">Agent execution status</span>
                 </li>
                 <li className="flex items-center">
                   <span className="bg-pink-100 p-1 rounded-full mr-2 text-pink-500">
                     <CheckCircle className="h-4 w-4" />
                   </span>
-                  <span className="text-purple-800">Risk prediction</span>
+                  <span className="text-purple-800">Limitations and caveats</span>
                 </li>
               </ul>
             </motion.div>
@@ -488,8 +486,8 @@ export default function HowItWorksPage() {
               className="px-8 py-6 border-white text-white hover:bg-white/20"
               asChild
             >
-              <Link href="/results">
-                View Sample Report
+              <Link href="/scan">
+                Start an evidence review
               </Link>
             </Button>
           </motion.div>

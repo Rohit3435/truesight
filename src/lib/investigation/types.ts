@@ -14,6 +14,10 @@ export interface EvidenceRecord {
     | "external_url"
     | "image";
   content: string;
+  imageData?: {
+    mimeType: "image/jpeg" | "image/png" | "image/webp" | "image/gif";
+    base64: string;
+  };
   source: "official_api" | "user_provided";
   sourceLabel: string;
   collectedAt: string;
@@ -67,7 +71,9 @@ export interface InvestigationReport {
   profileUrl: string;
   generatedAt: string;
   collectionStatus: "unavailable" | "partial" | "evidence_provided";
+  collectionMethod: "none" | "user_provided" | "official_api";
   evidenceCount: number;
+  evidenceSources: Array<Pick<EvidenceRecord, "id" | "kind" | "source" | "sourceLabel" | "collectedAt">>;
   agents: AgentOutput[];
   findings: Finding[];
   limitations: string[];

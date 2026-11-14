@@ -57,7 +57,7 @@ export function normalizeProfileInput(
       throw new ProfileInputError("Profile URLs must not contain credentials or a custom port.");
     }
     if (!PROFILE_HOSTS[platform].includes(url.hostname.toLowerCase())) {
-      throw new ProfileInputError(`Enter a ${platform} profile URL.`);
+        throw new ProfileInputError(`Enter a ${platform === "instagram" ? "Instagram" : "LinkedIn"} profile URL.`);
     }
 
     const segments = url.pathname.split("/").filter(Boolean);

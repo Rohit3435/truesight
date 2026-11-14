@@ -5,6 +5,7 @@ import { ProfileIntelligenceAgent } from "./profile-intelligence.ts";
 import { ProfessionalIntelligenceAgent } from "./professional-intelligence.ts";
 import { ToxicityLanguageAgent } from "./toxicity-language.ts";
 import { EvidenceObservationAgent } from "./evidence-observation.ts";
+import { ImageIntelligenceAgent } from "./image-intelligence.ts";
 import { verifyAgentFindings } from "./evidence-verification.ts";
 
 /**
@@ -19,6 +20,7 @@ export async function orchestrateInvestigation(
     new ProfessionalIntelligenceAgent(),
     new ToxicityLanguageAgent(),
     new EvidenceObservationAgent(),
+    new ImageIntelligenceAgent(),
   ],
 ): Promise<InvestigationReport> {
   const eligible = agents.filter((agent) => agent.canRun(context));
@@ -51,7 +53,9 @@ export async function orchestrateInvestigation(
     profileUrl: context.profileUrl,
     generatedAt: new Date().toISOString(),
     collectionStatus: context.evidence.length ? "evidence_provided" : "unavailable",
+    collectionMethod: context.evidence.length ? "user_provided" : "none",
     evidenceCount: context.evidence.length,
+    evidenceSources: context.evidence.map(({ id, kind, source, sourceLabel, collectedAt }) => ({ id, kind, source, sourceLabel, collectedAt })),
     agents: agentOutputs,
     findings,
     limitations: [...new Set(agentOutputs.flatMap((output) => output.limitations))],

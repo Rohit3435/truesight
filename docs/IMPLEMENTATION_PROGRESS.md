@@ -42,6 +42,13 @@
 - `npm test` passed (22/22), `npm run lint` passed, TypeScript passed, and the production build passed. Playwright passed (2/2). The build still reports stale Browserslist data; it does not affect build success.
 - OSINT adapter commit `1d38c01` is pushed to the development branch.
 
-## Next
+## Evidence submission and truthful reporting milestone
 
-Next: connect the existing UI to real evidence submission and investigation state after durable auth/storage is selected. The embedded Gemini credential identified by the audit should be treated as compromised and rotated by its owner.
+- Replaced the simulated scan flow with `POST /api/investigations`, accepting user-provided text and an optional validated image. The API does not fetch profile URLs, rejects malformed identifiers and unsupported uploads, and keeps report state transient rather than persisting it.
+- Rebuilt `/scan`, `/results`, and `/scanning`: image upload is optional; no sample findings, fake risk scores, simulated timers, or fabricated profile identity remain in the active review flow. Reports show evidence sources, executed/skipped agent states, traceable observations, and collection limitations.
+- Added consent-gated image analysis. It runs only with a configured image-capable provider and explicit opt-in. Without credentials, image model analysis is clearly skipped. Text checks remain limited deterministic extraction; no claim of sentiment, identity, safety, or risk scoring is made.
+- Replaced homepage and use-case copy that promised unsupported profile scraping, identity verification, safety metrics, fake testimonials, school case-study results, fixed subscription quotas, or sample reports. Removed obsolete `.new`, `.fixed`, and `.bak` UI snapshots containing fabricated scores and profile details.
+- Verification: `npm.cmd test` passed (25/25), `npm.cmd run lint` passed, `tsc --noEmit --incremental false` passed, `npm.cmd run test:e2e -- --workers=1` passed (3/3), and `npm.cmd run build` passed. The build notes stale Browserslist data only.
+- Limit: results are stored in browser session storage for the current tab; there is no authentication, durable history, or live authorized profile collection. Keep this as a local prototype until those boundaries are addressed.
+
+The embedded Gemini credential identified by the audit should be treated as compromised and rotated by its owner.

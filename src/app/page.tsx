@@ -83,8 +83,7 @@ export default function Home() {
                 How <span className="bg-gradient-to-r from-purple-800 via-purple-600 to-pink-500 text-transparent bg-clip-text">TrueSight</span> Works
               </h2>
               <p className="text-xl text-purple-800 max-w-3xl mx-auto relative z-10">
-                Our AI-powered platform combines advanced technology with ethical data analysis to 
-                give you the insights you need to stay safe online.
+                Provide profile material for a limited, source-linked review. TrueSight does not automatically collect or verify profile information.
               </p>
             </div>
             
@@ -107,7 +106,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-xl font-semibold mb-2 text-purple-900 group-hover:text-purple-800 transition-colors duration-300">Enter Profile Info</h3>
                   <p className="text-purple-700 group-hover:text-purple-800 transition-colors duration-300">
-                    Simply enter a name, username, or upload a photo to get started with your safety analysis.
+                    Choose Instagram or LinkedIn, enter a username, then submit relevant profile text or an optional image.
                   </p>
                 </div>
               </div>
@@ -128,9 +127,9 @@ export default function Home() {
                       <line x1="17.5" x2="9" y1="15" y2="15"></line>
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2 text-pink-900">AI + OSINT Scan</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-pink-900">Submit evidence</h3>
                   <p className="text-pink-700">
-                    Our advanced AI scans public data sources and social media using Open Source Intelligence techniques.
+                    No profile scraping runs. Analysis is limited to the text or image you submit.
                   </p>
                 </div>
               </div>
@@ -150,9 +149,9 @@ export default function Home() {
                       <path d="m19 9-5 5-4-4-3 3"></path>
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2 text-purple-900">Behavior Analysis</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-purple-900">Evidence analysis</h3>
                   <p className="text-purple-700">
-                    Deep analysis of posting patterns, language toxicity, and behavioral indicators for comprehensive insights.
+                    Applicable checks may extract literal details and cite the submitted evidence. Unavailable checks are identified in the report.
                   </p>
                 </div>
               </div>
@@ -171,9 +170,9 @@ export default function Home() {
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2 text-pink-900">Safety Dashboard</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-pink-900">Review the report</h3>
                   <p className="text-pink-700">
-                    Get a detailed safety score and actionable insights with evidence from reliable sources.
+                    See evidence sources, executed analysis steps, observations, and limitations. No safety score is generated.
                   </p>
                 </div>
               </div>
@@ -193,7 +192,7 @@ export default function Home() {
                 <span className="bg-gradient-to-r from-purple-800 via-purple-600 to-pink-500 text-transparent bg-clip-text">Key Features</span>
               </h2>
               <p className="text-xl text-purple-800 max-w-3xl mx-auto">
-                Advanced tools and technology that set TrueSight apart in online safety assessment.
+                Submit profile text or an optional image and review observations linked to that material.
               </p>
             </div>
 
@@ -210,8 +209,8 @@ export default function Home() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">AI-Powered OSINT</h3>
-                    <p className="text-purple-700">Our advanced AI combines Open Source Intelligence (OSINT) techniques with natural language processing to analyze public profiles across multiple platforms.</p>
+                    <h3 className="text-xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">Evidence review</h3>
+                    <p className="text-purple-700">Provide profile text, captions, professional details, or an optional image. TrueSight does not fetch profile pages automatically.</p>
                     <Link href="/scan" className="inline-flex items-center text-purple-600 font-medium mt-3 hover:text-purple-800 group-hover:underline">
                       Try it now
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 group-hover:translate-x-1 transition-transform">
@@ -238,10 +237,10 @@ export default function Home() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">Behavioral Analysis</h3>
-                    <p className="text-purple-700">Advanced pattern recognition detects potential red flags in communication patterns, engagement history, and content sentiment across platforms.</p>
-                    <Link href="/results" className="inline-flex items-center text-purple-600 font-medium mt-3 hover:text-purple-800 group-hover:underline">
-                      View sample analysis
+                    <h3 className="text-xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">Evidence-linked observations</h3>
+                    <p className="text-purple-700">The current review extracts limited details from submitted material and shows which evidence supports each observation. Missing model configuration is reported as unavailable.</p>
+                    <Link href="/scan" className="inline-flex items-center text-purple-600 font-medium mt-3 hover:text-purple-800 group-hover:underline">
+                      Submit material
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 group-hover:translate-x-1 transition-transform">
                         <path d="m9 18 6-6-6-6"></path>
                       </svg>
@@ -261,8 +260,8 @@ export default function Home() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">Identity Verification</h3>
-                    <p className="text-purple-700">Cross-reference data points across multiple platforms to determine the authenticity of profiles and detect potential impersonation attempts.</p>
+                    <h3 className="text-xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">Clear limitations</h3>
+                    <p className="text-purple-700">Reports distinguish supplied claims from independently verified facts. TrueSight does not authenticate a person or profile.</p>
                     <Link href="/use-cases" className="inline-flex items-center text-purple-600 font-medium mt-3 hover:text-purple-800 group-hover:underline">
                       Explore use cases
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 group-hover:translate-x-1 transition-transform">
@@ -284,8 +283,8 @@ export default function Home() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">Comprehensive Dashboard</h3>
-                    <p className="text-purple-700">Visualize safety analysis with intuitive charts, scores, and actionable recommendations based on our AI's findings.</p>
+                    <h3 className="text-xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">Transparent report</h3>
+                    <p className="text-purple-700">Review the evidence sources, which analysis steps ran, source-linked observations, and known collection limits. No safety score is generated.</p>
                     <Link href="/pricing" className="inline-flex items-center text-purple-600 font-medium mt-3 hover:text-purple-800 group-hover:underline">
                       Compare plans
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 group-hover:translate-x-1 transition-transform">
@@ -312,7 +311,7 @@ export default function Home() {
                 <span className="bg-gradient-to-r from-purple-800 via-purple-600 to-pink-500 text-transparent bg-clip-text">Documentation</span>
               </h2>
               <p className="text-xl text-purple-800 max-w-3xl mx-auto">
-                A comprehensive guide to our AI-powered safety tool, its key features, and various applications.
+                How to submit material and interpret the source-linked evidence review.
               </p>
             </div>
 
@@ -334,8 +333,9 @@ export default function Home() {
                   <h3 className="text-xl font-bold text-purple-900 mb-3">Getting Started</h3>
                   <div className="space-y-4 text-purple-800">
                     <p><strong className="text-purple-700">Landing Page:</strong> Quick access with our tagline "See who they really are — before you trust them."</p>
-                    <p><strong className="text-purple-700">Search Bar:</strong> Enter a name, username, or upload a photo to start a scan.</p>
-                    <p><strong className="text-purple-700">Scan Input Form:</strong> Fill out a clean form with Name/Handle, Profile Link, and Platform selection.</p>
+                    <p><strong className="text-purple-700">Platform:</strong> Select Instagram or LinkedIn and enter a username or profile URL.</p>
+                    <p><strong className="text-purple-700">Evidence:</strong> Paste relevant text; an image is optional.</p>
+                    <p><strong className="text-purple-700">Consent:</strong> Confirm that you may submit the material. External AI analysis needs separate opt-in.</p>
                   </div>
                   <Link href="/scan" className="inline-flex items-center text-purple-600 font-medium mt-4 hover:text-purple-800 group-hover:underline">
                     Try scanning now
@@ -354,12 +354,12 @@ export default function Home() {
                   </div>
                   <h3 className="text-xl font-bold text-purple-900 mb-3">Understanding Results</h3>
                   <div className="space-y-4 text-purple-800">
-                    <p><strong className="text-purple-700">Safety Score:</strong> A numerical score (0-100) with risk label.</p>
-                    <p><strong className="text-purple-700">Detailed Insights:</strong> Identity likelihood, toxicity level, harassment cues, bot probability, and impersonation signals.</p>
-                    <p><strong className="text-purple-700">Evidence Snippets:</strong> Direct links to source material with recommendations.</p>
+                    <p><strong className="text-purple-700">Evidence sources:</strong> Material you supplied for this review.</p>
+                    <p><strong className="text-purple-700">Analysis status:</strong> Which evidence-based steps ran or were skipped.</p>
+                    <p><strong className="text-purple-700">Observations:</strong> Limited findings linked to supplied evidence, with caveats.</p>
                   </div>
-                  <Link href="/results" className="inline-flex items-center text-purple-600 font-medium mt-4 hover:text-purple-800 group-hover:underline">
-                    See sample results
+                  <Link href="/scan" className="inline-flex items-center text-purple-600 font-medium mt-4 hover:text-purple-800 group-hover:underline">
+                    Start an evidence review
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 group-hover:translate-x-1 transition-transform">
                       <path d="m9 18 6-6-6-6"></path>
                     </svg>
@@ -376,11 +376,11 @@ export default function Home() {
                       <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-purple-900 mb-3">Applications & Plans</h3>
+                  <h3 className="text-xl font-bold text-purple-900 mb-3">Current availability</h3>
                   <div className="space-y-4 text-purple-800">
-                    <p><strong className="text-purple-700">Use Cases:</strong> Dating safety, hiring pre-check, roommates/co-founders, and online buying/selling.</p>
-                    <p><strong className="text-purple-700">Pricing Tiers:</strong> Free (3 scans/month), Pro (50 scans/month), and Business (bulk scans with admin dashboard).</p>
-                    <p><strong className="text-purple-700">Enterprise Features:</strong> Team management, bulk CSV upload, audit logs, and evidence retention settings.</p>
+                    <p>Evidence reviews are processed for the request and are not saved in an investigation database.</p>
+                    <p>Automated profile collection is unavailable without an authorized provider.</p>
+                    <p>Provider-backed image or model analysis is skipped when configuration or consent is missing.</p>
                   </div>
                   <Link href="/pricing" className="inline-flex items-center text-purple-600 font-medium mt-4 hover:text-purple-800 group-hover:underline">
                     View pricing plans
@@ -448,7 +448,7 @@ export default function Home() {
                     </div>
                     Service Description & User Responsibilities
                   </h3>
-                  <p className="mb-4">TrueSight provides an AI-powered analysis of public data (Open-Source Intelligence or "OSINT") to generate a safety score and behavioral insights about an online profile.</p>
+                  <p className="mb-4">TrueSight reviews user-submitted text and optional images. It does not automatically collect public data, verify identity, or generate a safety score.</p>
                   <p>You agree to use TrueSight only for lawful purposes and must not use it to scan individuals without legitimate reason, harass or stalk any individual, misrepresent findings, or violate privacy rights.</p>
                   <Link href="/use-cases" className="inline-flex items-center text-purple-300 font-medium mt-4 hover:text-white group-hover:underline">
                     Explore legitimate use cases
@@ -508,7 +508,7 @@ export default function Home() {
                 <span className="text-xl font-bold">True<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">Sight</span></span>
               </Link>
               <p className="text-purple-200">
-                See the truth behind online profiles. AI-powered safety analysis for a safer digital world.
+                Review submitted profile material with source-linked observations and clear limitations.
               </p>
             </div>
             
@@ -525,10 +525,7 @@ export default function Home() {
             <div>
               <h3 className="font-semibold mb-4 text-white">Use Cases</h3>
               <ul className="space-y-2">
-                <li><Link href="/use-cases/dating" className="text-purple-200 hover:text-pink-300 transition-colors">Dating Safety</Link></li>
-                <li><Link href="/use-cases/hiring" className="text-purple-200 hover:text-pink-300 transition-colors">Hiring Pre-Check</Link></li>
-                <li><Link href="/use-cases/roommates" className="text-purple-200 hover:text-pink-300 transition-colors">Roommates</Link></li>
-                <li><Link href="/use-cases/buying-selling" className="text-purple-200 hover:text-pink-300 transition-colors">Online Marketplaces</Link></li>
+                <li><Link href="/use-cases" className="text-purple-200 hover:text-pink-300 transition-colors">Review scope</Link></li>
               </ul>
             </div>
             

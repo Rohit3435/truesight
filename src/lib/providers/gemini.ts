@@ -25,6 +25,7 @@ const MAX_INLINE_IMAGE_BYTES = 8 * 1024 * 1024;
  */
 export class GeminiProvider implements TextModelProvider {
   readonly providerName = "gemini";
+  readonly supportsImages = true;
   readonly modelName: string;
   private readonly apiKey?: string;
   private readonly fetcher: typeof fetch;
