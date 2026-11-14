@@ -25,7 +25,7 @@
 - Added typed investigation/evidence/report contracts and explicit Instagram/LinkedIn collectors that report unavailable without authorized access; neither attempts scraping or access-control bypass.
 - Added conditional profile, caption, and LinkedIn professional evidence agents, evidence-reference verification, and concurrent orchestration with per-agent failure isolation. These are deterministic extraction modules, not LLM agents; model-dependent analysis remains unavailable until an approved provider is configured.
 - Added the multi-agent architecture guide and tests for skipped agents, source traceability, unsupported claim removal, and isolated failure.
-- `npm.cmd test` passed (9/9). `git diff --check` passed. TypeScript/ESLint/build remain unavailable because dependencies are not installed.
+- `npm.cmd test` passed (12/12) after the optional classifier agent was added. `git diff --check` passed.
 - Commit: `1c9664c` (`feat: add evidence-first investigation orchestration`), pushed successfully to `origin/feature/truesight-functional-upgrade`.
 - Installed the locked dependencies with `npm ci` for validation. Fixed the existing Next.js 14 ESLint preset reference, typed the shared Framer Motion variants, and wrapped the login/signup `useSearchParams` consumers in Suspense so routes can prerender.
 - `npm run lint` passed, `tsc --noEmit --incremental false` passed, and `npm run build` passed with the permitted font network access. The build reported stale Browserslist data; no update was applied.
@@ -34,9 +34,10 @@
 
 - Added a server-side Gemini multimodal structured-output adapter, explicit Groq/Ollama text adapters, a provider factory with no silent failover, and a Hugging Face classifier/agent guarded by explicit external-provider consent.
 - Added `.env.example`, integration decisions and boundaries in `docs/INTEGRATIONS.md`, and mocked provider tests. These provider APIs have not been live-tested because no account credentials/local Ollama service are configured.
-- VirusTotal, URLScan, Sherlock, ExifTool, LangGraph, and Playwright are documented with their integration boundaries; they are not currently integrated. Public OSINT checks that risk disclosing submitted data or breaching use limits remain disabled pending product privacy and license configuration.
-- The expanded test suite, lint, and TypeScript checks passed (18/18 tests). Provider changes are not yet committed/pushed.
+- VirusTotal, URLScan, Sherlock, ExifTool, and LangGraph are documented with their integration boundaries and remain deferred. Public OSINT checks that risk disclosing submitted data or breaching use limits remain disabled pending product privacy and license configuration.
+- The expanded test suite passed (18/18), and lint/TypeScript checks passed. Provider adapter commits `44e8c1b` and `bff5223` are pushed to the development branch.
+- Added Playwright Test as a dev dependency, a Chromium configuration, and two browser smoke tests. `npm run test:e2e -- --workers=1` passed (2/2) after waiting for the dev server's initial route compilation. Test output is ignored by Git.
 
 ## Next
 
-Proceed with the secure foundation phase. The embedded Gemini credential identified by the audit should be treated as compromised and rotated by its owner.
+Next: connect the existing UI to real evidence submission and investigation state after durable auth/storage is selected. The embedded Gemini credential identified by the audit should be treated as compromised and rotated by its owner.
