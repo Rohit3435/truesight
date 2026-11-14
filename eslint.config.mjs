@@ -10,7 +10,9 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  // eslint-config-next 14 ships the TypeScript parser through its core config;
+  // it does not expose the newer `next/typescript` preset.
+  ...compat.extends("next/core-web-vitals"),
   {
     ignores: [
       "node_modules/**",

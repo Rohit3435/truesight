@@ -1,3 +1,5 @@
+import type { Variants } from "framer-motion";
+
 export const aurauiMotion = {
   container: {
     hidden: { opacity: 0 },
@@ -17,4 +19,4 @@ export const aurauiMotion = {
       transition: { type: "spring", stiffness: 120, damping: 20 },
     },
   },
-};
+} satisfies { container: Variants; item: Variants };
