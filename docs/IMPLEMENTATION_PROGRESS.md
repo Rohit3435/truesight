@@ -26,7 +26,7 @@
 - Added conditional profile, caption, and LinkedIn professional evidence agents, evidence-reference verification, and concurrent orchestration with per-agent failure isolation. These are deterministic extraction modules, not LLM agents; model-dependent analysis remains unavailable until an approved provider is configured.
 - Added the multi-agent architecture guide and tests for skipped agents, source traceability, unsupported claim removal, and isolated failure.
 - `npm.cmd test` passed (9/9). `git diff --check` passed. TypeScript/ESLint/build remain unavailable because dependencies are not installed.
-- Commit and push for this phase are pending.
+- Commit: `1c9664c` (`feat: add evidence-first investigation orchestration`), pushed successfully to `origin/feature/truesight-functional-upgrade`.
 
 ## Next
 
