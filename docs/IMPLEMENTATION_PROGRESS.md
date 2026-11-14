@@ -2,13 +2,14 @@
 
 ## Phase 1 — Repository audit
 
-**Status:** Complete (audit documentation prepared; commit/push pending).
+**Status:** Complete.
 
 - Confirmed clean working tree and `feature/truesight-functional-upgrade` branch.
 - Confirmed `origin` points to `Rohit3435/truesight`.
 - Inspected app routes, scan and results flow, AI wrapper, dependencies, configuration, and tracked files.
 - Documented the existing frontend architecture, simulated functionality, hardcoded output, missing backend/auth/data layers, security concerns, and a staged implementation roadmap in [PROJECT_AUDIT.md](PROJECT_AUDIT.md).
 - No tests were run for this read-only audit.
+- Audit commit: `58bca58` (`docs: add project architecture audit`), pushed successfully to `origin/feature/truesight-functional-upgrade`.
 
 ## Next
 
