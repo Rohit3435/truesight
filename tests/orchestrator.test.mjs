@@ -15,7 +15,7 @@ test("skips agents when their required evidence is absent", async () => {
   const report = await orchestrateInvestigation({ ...baseContext, evidence: [] });
   assert.equal(report.collectionStatus, "unavailable");
   assert.equal(report.findings.length, 0);
-  assert.ok(report.agents.every((agent) => agent.status === "skipped"));
+  assert.ok(report.agents.filter((agent) => !["evidence-verification", "investigation-orchestrator", "report-generation"].includes(agent.agent)).every((agent) => agent.status === "skipped"));
 });
 
 test("runs only applicable agents and retains traceable observations", async () => {
@@ -138,4 +138,22 @@ test("model evidence agent requires consent and drops quotes absent from source 
   assert.equal(output.findings[0].evidenceQuote, "Developer at Example");
   assert.equal(output.findings[0].verification, "requires_review");
   assert.equal(output.provider, "gemini");
+});
+
+test("URL intelligence reports literal links without pretending to check reputation", async () => {
+  const report = await orchestrateInvestigation({
+    ...baseContext,
+    evidence: [{
+      id: "url-evidence", platform: "instagram", kind: "external_url",
+      content: "My site is https://example.org/about.", source: "user_provided",
+      sourceLabel: "User-provided profile details", collectedAt: "2026-11-15T00:00:00.000Z",
+    }],
+  });
+  const urlAgent = report.agents.find((agent) => agent.agent === "url-security-intelligence");
+  assert.equal(urlAgent.status, "completed");
+  assert.equal(urlAgent.findings.length, 1);
+  assert.match(urlAgent.limitations.join(" "), /not connected/);
+  assert.ok(report.agents.some((agent) => agent.agent === "username-osint" && agent.status === "skipped"));
+  assert.ok(report.agents.some((agent) => agent.agent === "evidence-verification" && agent.status === "completed"));
+  assert.ok(report.agents.some((agent) => agent.agent === "report-generation" && agent.status === "completed"));
 });

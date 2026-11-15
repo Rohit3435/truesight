@@ -29,6 +29,7 @@ export interface InvestigationContext {
   username: string;
   profileUrl: string;
   evidence: EvidenceRecord[];
+  userId?: string;
   /** External model calls are disabled unless the caller records explicit consent. */
   externalProviderConsent?: boolean;
 }
@@ -70,8 +71,10 @@ export interface InvestigationReport {
   username: string;
   profileUrl: string;
   generatedAt: string;
-  collectionStatus: "unavailable" | "partial" | "evidence_provided";
-  collectionMethod: "none" | "user_provided" | "official_api";
+  collectionStatus: "unavailable" | "partial" | "complete" | "evidence_provided";
+  collectionMethod: "none" | "user_provided" | "official_api" | "mixed";
+  collectionErrors?: string[];
+  completedStatus?: "completed" | "partial" | "failed";
   evidenceCount: number;
   evidenceSources: Array<Pick<EvidenceRecord, "id" | "kind" | "source" | "sourceLabel" | "collectedAt">>;
   agents: AgentOutput[];

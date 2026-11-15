@@ -33,8 +33,11 @@ The orchestrator runs eligible independent agents concurrently with `Promise.all
 - **Evidence observation:** optionally uses the explicitly selected Gemini, Groq, or local Ollama provider after external-provider consent. It has a strict evidence/text limit, requires exact quotes from cited evidence, drops outputs without a matching source quote, and marks accepted observations for review.
 - **Evidence verification:** checks evidence references and preserves review status for user-provided material.
 - **Investigation orchestration:** routes by evidence availability, isolates failures, and assembles the report.
+- **URL and security intelligence:** extracts literal HTTP(S) links from evidence and explicitly reports that destination reputation was not checked. Existing reputation adapters are not invoked automatically.
+- **Username OSINT:** records a visible skipped state until an approved, opt-in username discovery provider is configured; it does not probe third-party sites.
+- **Report generation:** adds an execution status after the verified evidence and agent outputs are assembled.
 
-Gemini image analysis, LLM report generation, external URL reputation checks, and username cross-source search are not implemented. The text evidence agent is wired to the provider abstraction but has only been tested with mocked model responses; no provider has been live-tested. Hugging Face predictions are also only tested with mocked responses, not a live key.
+Gemini image analysis and evidence-observation are implemented behind the optional provider interface. External URL reputation checks and username cross-source search are not connected to the investigation flow. The text and image model agents have only been tested with mocked model responses; no provider has been live-tested. Hugging Face predictions are also only tested with mocked responses, not a live key.
 
 ## Evidence and confidence
 

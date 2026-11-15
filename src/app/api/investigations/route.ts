@@ -3,6 +3,7 @@ import { normalizeProfileInput, ProfileInputError, type SocialPlatform } from ".
 import { InstagramCollector, LinkedInCollector } from "../../../lib/investigation/collectors.ts";
 import type { EvidenceRecord } from "../../../lib/investigation/types.ts";
 import { orchestrateInvestigation } from "../../../lib/agents/orchestrator.ts";
+import { getSessionUser, saveInvestigation, sessionToken } from "../../../lib/database.ts";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -15,8 +16,10 @@ const EVIDENCE_KINDS = new Set<EvidenceRecord["kind"]>([
   "profile", "caption", "professional_experience", "education", "skills", "certification", "external_url",
 ]);
 
-/** Accepts user-provided evidence only; platform profile URLs are never fetched. */
+/** Attempts configured authorized collection and then analyzes available evidence. */
 export async function POST(request: Request): Promise<Response> {
+  const user = await getSessionUser(sessionToken(request));
+  if (!user) return json({ error: "Sign in to save and run investigations." }, 401);
   const contentLength = Number(request.headers.get("content-length") ?? 0);
   if (contentLength > MAX_REQUEST_BYTES) return json({ error: "Request exceeds the 4 MB limit." }, 413);
 
@@ -46,8 +49,10 @@ export async function POST(request: Request): Promise<Response> {
       return json({ error: "Choose a supported evidence type." }, 400);
     }
 
+    const modeValue = form.get("mode");
+    const mode = modeValue === "automatic" || modeValue === "evidence" || modeValue === "combined" ? modeValue : "combined";
     const evidence: EvidenceRecord[] = [];
-    if (content.trim()) {
+    if (mode !== "automatic" && content.trim()) {
       evidence.push({
         id: randomUUID(),
         platform: target.platform,
@@ -60,7 +65,7 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     const imageValue = form.get("evidenceImage");
-    if (imageValue !== null) {
+    if (mode !== "automatic" && imageValue !== null) {
       if (!isFile(imageValue)) return json({ error: "Uploaded evidence must be an image file." }, 400);
       if (imageValue.size > MAX_IMAGE_BYTES) return json({ error: "Image must be 3 MB or smaller." }, 413);
       if (!IMAGE_TYPES.has(imageValue.type)) return json({ error: "Use a JPEG, PNG, WebP, or GIF image." }, 400);
@@ -79,29 +84,38 @@ export async function POST(request: Request): Promise<Response> {
       });
     }
 
-    if (evidence.length === 0) {
-      return json({ error: "Add text evidence or attach an optional image before starting the analysis." }, 400);
-    }
-
     const externalProviderConsent = form.get("externalProviderConsent") === "true";
-    const collection = target.platform === "instagram"
-      ? await new InstagramCollector().collect(target)
-      : await new LinkedInCollector().collect(target);
+    if (form.get("permissionConfirmed") !== "true") return json({ error: "Confirm that you have permission to submit this material for investigation." }, 400);
+    const collection = mode === "evidence"
+      ? { status: "unavailable" as const, method: "none" as const, evidence: [] as EvidenceRecord[], limitations: [] as string[] }
+      : await (target.platform === "instagram" ? new InstagramCollector() : new LinkedInCollector()).collect(target);
+    const allEvidence = [...collection.evidence, ...evidence];
+    if (allEvidence.length === 0 && mode === "evidence") {
+      return json({ error: "Add profile text, captions, professional details, or an image for evidence-based analysis." }, 400);
+    }
     const report = await orchestrateInvestigation({
       investigationId: randomUUID(),
       platform: target.platform,
       username: target.username,
       profileUrl: target.profileUrl,
-      evidence,
+      evidence: allEvidence,
       externalProviderConsent,
     });
 
     report.limitations = [...collection.limitations, ...report.limitations];
-    report.collectionStatus = collection.status === "partial" ? "partial" : "evidence_provided";
-    report.collectionMethod = collection.method === "none" ? "user_provided" : collection.method;
+    report.collectionStatus = mode === "evidence" ? "evidence_provided"
+      : collection.status === "complete" ? "complete"
+      : collection.status === "partial" ? "partial"
+      : collection.status === "unavailable" ? (evidence.length ? "partial" : "unavailable") : "evidence_provided";
+    report.collectionMethod = collection.method === "none" ? (evidence.length ? "user_provided" : "none")
+      : evidence.length ? "mixed" : collection.method;
+    report.collectionErrors = collection.limitations;
+    report.completedStatus = allEvidence.length ? "completed" : "failed";
+    report.limitations = [...new Set([...collection.limitations, ...report.limitations])];
+    await saveInvestigation(user.id, report);
     return json({ report }, 201);
   } catch {
-    return json({ error: "The evidence could not be analyzed. Please check the upload and try again." }, 400);
+    return json({ error: "The investigation could not be saved. Check the upload and local storage, then try again." }, 500);
   }
 }
 

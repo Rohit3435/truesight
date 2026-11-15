@@ -52,3 +52,43 @@
 - Limit: results are stored in browser session storage for the current tab; there is no authentication, durable history, or live authorized profile collection. Keep this as a local prototype until those boundaries are addressed.
 
 The embedded Gemini credential identified by the audit should be treated as compromised and rotated by its owner.
+
+## Functional upgrade — current implementation
+
+The completed work below supersedes the prototype limitations recorded in earlier milestones.
+
+### Completed
+
+- Added [ROOT_CAUSE_ANALYSIS.md](ROOT_CAUSE_ANALYSIS.md) documenting the traced UI → API → collector → agent → results path and the exact `hr__rohit` behavior before implementation.
+- Added signup/login/logout/me API routes. Passwords are salted scrypt hashes; sessions are opaque random IDs stored by digest in an HttpOnly SameSite cookie, expire after 14 days, and can be revoked on logout. Protected investigation APIs validate session ownership.
+- Added local persistent single-instance account, session, and report storage in `.data/truesight.json`; excluded it from Git. Added user-scoped investigation history and ID-based report retrieval after refresh.
+- Added automatic, evidence-only, and combined investigation modes. Automatic collection is attempted with no pasted material; combined mode preserves the collection attempt when optional evidence is empty; evidence-only mode validates that evidence exists.
+- Replaced the always-unavailable Instagram placeholder with an authorized Meta Graph API Business Discovery adapter. It captures bounded profile fields and captions when configured and eligible, otherwise preserves the specific provider failure. LinkedIn now explains why its standard member OAuth is not arbitrary public target lookup and offers evidence-based continuation.
+- Fixed report metadata so unavailable collection is never relabeled as successful user-provided collection. Reports preserve evidence source labels, collection errors, real agent statuses, and no-evidence failure state. Agent skips now include the missing prerequisite/consent reason.
+- Added branded investigation history, source-aware report collection outcome messaging, setup docs, data-flow and agent docs, and standalone Docker deployment files for one instance with a persistent disk.
+- Added visible URL extraction/security status, username OSINT skipped status when no approved provider exists, and explicit evidence-verification, orchestration, and report-generation steps. URL reputation adapters are not falsely represented as run.
+- Added exact `hr__rohit`/`About person` coverage, automatic username/URL cases, missing credentials, mocked Graph API success and inaccessible-target failures, auth API/session/logout, evidence validation, URL extraction, and report refresh coverage.
+
+### Verification
+
+- `npm test`: **38 passed, 0 failed**.
+- `npm run lint`: passed.
+- `npx tsc --noEmit --incremental false`: passed.
+- `npm run test:e2e -- --workers=1`: **3 passed** (signup-backed scan, report display, refresh retrieval).
+- `npm run build`: passed with Next standalone output. The only build notice is outdated Browserslist data.
+- Local smoke check: `http://localhost:3000` returned HTTP 200; unauthenticated investigation history returned HTTP 401.
+- `git diff --check`: passed.
+
+### Remaining blockers and limits
+
+- No Meta API credentials were configured, so live Instagram Business Discovery and profile eligibility were not verified. Configure `INSTAGRAM_ACCESS_TOKEN` and `INSTAGRAM_BUSINESS_ACCOUNT_ID` with approved Meta permissions.
+- No AI credentials were configured; live model calls are unverified. Add the selected server-side AI provider key to `.env` and opt in on the form.
+- LinkedIn does not provide unrestricted arbitrary public profile access through standard member OAuth. No specific approved partner/member-consent target-data integration was configured; supply authorized evidence for targets unavailable through approved access.
+- Current persistence is durable for local/single-container, single-instance use only. The included container requires a persistent `/app/.data` volume. Multi-instance deployment requires replacing the JSON store with a managed database. Email ownership verification, password reset, distributed rate limiting, and live external URL reputation workflows remain unimplemented.
+- Deployment files are prepared, but no hosted environment, credentials, or deployment verification were supplied. No deployment is claimed.
+
+### Git status
+
+- Branch: `feature/truesight-functional-upgrade`.
+- Commit: pending final review and commit.
+- Push: pending commit.

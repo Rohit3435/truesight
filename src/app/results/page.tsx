@@ -11,19 +11,13 @@ export default function ResultsPage() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem("investigationReport");
-      if (stored) {
-        const candidate = JSON.parse(stored) as { report?: InvestigationReport };
-        if (candidate.report?.investigationId && Array.isArray(candidate.report.findings)) {
-          setReport(candidate.report);
-        }
-      }
-    } catch {
-      setReport(null);
-    } finally {
-      setLoaded(true);
-    }
+    const id = new URLSearchParams(window.location.search).get("id");
+    if (!id) { setLoaded(true); return; }
+    fetch(`/api/investigations/${encodeURIComponent(id)}`).then(async (response) => {
+      if (!response.ok) return;
+      const candidate = await response.json() as { report?: InvestigationReport };
+      if (candidate.report?.investigationId && Array.isArray(candidate.report.findings)) setReport(candidate.report);
+    }).finally(() => setLoaded(true));
   }, []);
 
   if (!loaded) return <main className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50" />;
@@ -34,7 +28,7 @@ export default function ResultsPage() {
         <section className="mx-auto max-w-2xl rounded-2xl border border-purple-100 bg-white p-8 text-center shadow-lg">
           <CircleHelp className="mx-auto mb-4 h-10 w-10 text-purple-500" />
           <h1 className="text-2xl font-bold text-purple-950">No completed analysis found</h1>
-          <p className="mt-3 text-purple-700">Start an evidence review to see source-linked observations here.</p>
+          <p className="mt-3 text-purple-700">Sign in and open an investigation from your history, or start a new one.</p>
           <Button asChild className="mt-6 bg-purple-700 text-white hover:bg-purple-800">
             <Link href="/scan">Start an evidence review</Link>
           </Button>
@@ -53,7 +47,7 @@ export default function ResultsPage() {
         <header className="mb-8 rounded-2xl border border-purple-100 bg-white/90 p-7 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-purple-600">Evidence review</p>
+              <p className="text-sm font-semibold uppercase tracking-wide text-purple-600">Investigation report · {report.completedStatus ?? "completed"}</p>
               <h1 className="mt-2 break-all text-3xl font-bold text-purple-950">{report.username}</h1>
               <a className="mt-2 inline-block break-all text-sm text-purple-700 underline" href={report.profileUrl} target="_blank" rel="noreferrer">
                 {report.profileUrl}
@@ -72,8 +66,9 @@ export default function ResultsPage() {
           <div className="flex gap-3">
             <CircleHelp className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
             <div>
-              <h2 className="font-semibold text-blue-950">Collection limits</h2>
-              <p className="mt-1 text-sm text-blue-900">No profile page was fetched. This report analyzes only material you submitted. Platform data collection is unavailable until an authorized source is configured.</p>
+              <h2 className="font-semibold text-blue-950">Collection outcome</h2>
+              {report.collectionErrors?.length ? <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-blue-900">{report.collectionErrors.map((message, index) => <li key={index}>{message}</li>)}</ul> : <p className="mt-1 text-sm text-blue-900">No collection limitations were reported.</p>}
+              {!report.evidenceCount && <p className="mt-3 text-sm font-medium text-blue-950">No profile data was obtained. Add authorized profile text, screenshots, or exported information and run a combined investigation.</p>}
             </div>
           </div>
         </section>
