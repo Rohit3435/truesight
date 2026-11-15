@@ -37,7 +37,7 @@ test("analysis route returns only user-provided evidence and source-linked findi
   assert.equal(report.evidenceSources.length, 1);
   assert.ok(report.findings.some((finding) => finding.observation.includes("#example")));
   assert.ok(!JSON.stringify(report).includes("base64"));
-  assert.ok(report.limitations.some((item) => item.includes("Instagram collection was attempted")));
+  assert.ok(report.limitations.some((item) => item.includes("INSTAGRAM_ACCESS_TOKEN")));
 });
 
 test("analysis route rejects unsupported or invalid profiles", async () => {
@@ -61,6 +61,8 @@ test("image evidence is optional and validated when supplied", async () => {
   assert.equal(report.evidenceCount, 1);
   assert.equal(report.evidenceSources[0].kind, "image");
   assert.equal(report.agents.find((agent) => agent.agent === "image-intelligence").status, "skipped");
+  assert.equal(report.status, "blocked");
+  assert.equal(report.agents.find((agent) => agent.agent === "report-generation").status, "skipped");
 });
 
 test("automatic username investigation runs without manual evidence and explains unavailable collection", async () => {
@@ -71,8 +73,12 @@ test("automatic username investigation runs without manual evidence and explains
   assert.equal(report.evidenceCount, 0);
   assert.equal(report.collectionStatus, "unavailable");
   assert.equal(report.collectionMethod, "none");
-  assert.ok(report.collectionErrors.some((reason) => reason.includes("Instagram collection was attempted")));
-  assert.equal(report.completedStatus, "failed");
+  assert.ok(report.collectionErrors.some((reason) => reason.includes("INSTAGRAM_ACCESS_TOKEN")));
+  assert.equal(report.collection.attempted, false);
+  assert.equal(report.status, "blocked");
+  assert.equal(report.completedStatus, "blocked");
+  assert.deepEqual(report.statusHistory.map((event) => event.status), ["queued", "collecting", "analysing", "blocked"]);
+  assert.equal(report.agents.find((agent) => agent.agent === "report-generation").status, "skipped");
 });
 
 test("combined mode preserves an automatic attempt when no optional evidence was added", async () => {
@@ -81,7 +87,7 @@ test("combined mode preserves an automatic attempt when no optional evidence was
   const { report } = await response.json();
   assert.equal(report.evidenceCount, 0);
   assert.equal(report.collectionStatus, "unavailable");
-  assert.equal(report.completedStatus, "failed");
+  assert.equal(report.status, "blocked");
 });
 
 test("evidence-only mode requires supplied evidence", async () => {
@@ -110,7 +116,10 @@ test("exact About person skills input remains a limited user claim, not a profil
   assert.equal(report.evidenceCount, 1);
   assert.equal(report.evidenceSources[0].source, "user_provided");
   assert.ok(report.collectionErrors.length);
-  assert.ok(!report.findings.some((finding) => /skill|experience|identity/i.test(finding.observation)));
+  assert.ok(report.findings.some((finding) => /not contain enough detail/.test(finding.observation) && finding.evidenceQuote === "About person"));
+  assert.equal(report.status, "partially_completed");
+  assert.equal(report.collection.attempted, false);
+  assert.deepEqual(report.statusHistory.map((event) => event.status), ["queued", "collecting", "analysing", "partially_completed"]);
 });
 
 test("investigation route requires a real authenticated session", async () => {

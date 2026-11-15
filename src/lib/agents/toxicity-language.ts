@@ -20,15 +20,15 @@ export class ToxicityLanguageAgent implements InvestigationAgent {
   canRun(context: InvestigationContext): boolean {
     return context.externalProviderConsent === true
       && this.classifier.isConfigured()
-      && context.evidence.some((item) => item.kind === "caption");
+      && context.evidence.some((item) => item.kind !== "image" && item.content.trim().length > 0);
   }
 
   async run(context: InvestigationContext): Promise<AgentOutput> {
-    const captions = context.evidence.filter((item) => item.kind === "caption").slice(0, MAX_CAPTIONS_PER_RUN);
+    const captions = context.evidence.filter((item) => item.kind !== "image" && item.content.trim()).slice(0, MAX_CAPTIONS_PER_RUN);
     const findings: Finding[] = [];
     const limitations: string[] = [
       "Classification labels are model-specific predictions and require human review; they are not a judgment about the profile owner.",
-      "Caption text was sent to the configured Hugging Face Inference endpoint after external-provider consent.",
+      "Submitted text was sent to the configured Hugging Face Inference endpoint after external-provider consent.",
     ];
     let succeeded = 0;
 
@@ -59,14 +59,14 @@ export class ToxicityLanguageAgent implements InvestigationAgent {
     }
 
     if (succeeded === 0) throw new Error("Hugging Face classification failed for all supplied captions.");
-    if (context.evidence.filter((item) => item.kind === "caption").length > MAX_CAPTIONS_PER_RUN) {
-      limitations.push(`Only the first ${MAX_CAPTIONS_PER_RUN} caption items were sent for classification.`);
+    if (context.evidence.filter((item) => item.kind !== "image" && item.content.trim()).length > MAX_CAPTIONS_PER_RUN) {
+      limitations.push(`Only the first ${MAX_CAPTIONS_PER_RUN} text items were sent for classification.`);
     }
 
     return {
       agent: this.name,
       status: "completed",
-      summary: `Returned model-specific labels for ${succeeded} supplied caption(s).`,
+      summary: `Returned model-specific labels for ${succeeded} supplied text item(s).`,
       findings,
       limitations,
     };

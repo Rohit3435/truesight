@@ -93,3 +93,12 @@ The completed work below supersedes the prototype limitations recorded in earlie
 - Implementation commit: `b6db7f6` (`feat: complete authenticated profile investigation flow`).
 - Push: successful to `origin/feature/truesight-functional-upgrade`.
 - Progress record commit: `6dcd0e6` (`docs: record functional upgrade verification and blockers`), pushed successfully; working tree clean.
+
+## Empty-report pipeline correction
+
+- Traced the saved local `hr__rohit` report instead of inferring from the UI: it was an evidence-only Instagram report with one `education` item, zero findings, and a stale successful status. The old Professional agent required LinkedIn; Content/Toxicity required caption evidence; the API marked any nonempty evidence completed.
+- Expanded independent agent gates to analyze available non-image text and professional material on either platform. Short generic “About person” material now yields an evidence-quoted insufficiency observation, not a fabricated skill/profile claim.
+- Added explicit provider attempt/response, data collected/unavailable, failure reason, and next-action metadata. Evidence-only mode states that collection was not requested; automatic mode reports Meta as not called when the authorized token/account ID are missing.
+- Added `queued → collecting → analysing → final outcome` status history. Zero-finding reports now end `blocked` and mark report generation skipped; partial observations plus missing collection/model providers end `partially_completed`. Existing empty completed reports are normalized to blocked when fetched from history.
+- Gemini was not called: `.env` is absent and there is no configured key. The configured model ID is currently listed as stable by Google's model documentation, and the existing mocked adapter tests validate request/response parsing; live API credentials remain required for an actual inference.
+- Verification after this correction: `npm test` **40/40**; `npm run lint` passed; TypeScript passed; `npm run test:e2e -- --workers=1` **4/4**, including live local API request/response for exact `hr__rohit` + Instagram + skills + `About person`; production build passed.

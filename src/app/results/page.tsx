@@ -37,6 +37,8 @@ export default function ResultsPage() {
     );
   }
 
+  const outcome = report.status ?? report.completedStatus ?? (report.findings.length ? "completed" : "blocked");
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 px-4 py-12">
       <div className="mx-auto max-w-4xl">
@@ -47,7 +49,7 @@ export default function ResultsPage() {
         <header className="mb-8 rounded-2xl border border-purple-100 bg-white/90 p-7 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-purple-600">Investigation report · {report.completedStatus ?? "completed"}</p>
+              <p className="text-sm font-semibold uppercase tracking-wide text-purple-600">Investigation report · {outcome.replaceAll("_", " ")}</p>
               <h1 className="mt-2 break-all text-3xl font-bold text-purple-950">{report.username}</h1>
               <a className="mt-2 inline-block break-all text-sm text-purple-700 underline" href={report.profileUrl} target="_blank" rel="noreferrer">
                 {report.profileUrl}
@@ -62,12 +64,26 @@ export default function ResultsPage() {
           </dl>
         </header>
 
+        {outcome === "blocked" || outcome === "failed" ? <section role="alert" className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-6">
+          <h2 className="font-semibold text-red-950">{outcome === "failed" ? "Investigation failed" : "No findings: investigation blocked"}</h2>
+          <p className="mt-1 text-sm text-red-900">{report.findings.length ? "Some evidence-backed findings are available below." : "TrueSight did not obtain enough accessible evidence to produce a supported observation. This report is not a successful profile analysis."}</p>
+          {report.collection?.nextAction && <p className="mt-2 text-sm font-medium text-red-950">Next: {report.collection.nextAction}</p>}
+        </section> : null}
+
         <section className="mb-6 rounded-2xl border border-blue-100 bg-blue-50/70 p-6">
           <div className="flex gap-3">
             <CircleHelp className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
             <div>
               <h2 className="font-semibold text-blue-950">Collection outcome</h2>
-              {report.collectionErrors?.length ? <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-blue-900">{report.collectionErrors.map((message, index) => <li key={index}>{message}</li>)}</ul> : <p className="mt-1 text-sm text-blue-900">No collection limitations were reported.</p>}
+              <dl className="mt-2 grid gap-3 text-sm text-blue-950 sm:grid-cols-2">
+                <div><dt className="font-medium">Provider</dt><dd>{report.collection?.provider ?? "Provider details were not recorded"}</dd></div>
+                <div><dt className="font-medium">Attempted</dt><dd>{report.collection?.attempted ? "Yes" : "No"}</dd></div>
+                <div className="sm:col-span-2"><dt className="font-medium">Provider response</dt><dd>{report.collection?.response ?? report.collectionErrors?.[0] ?? "No collection attempt or response was recorded for this report."}</dd></div>
+                <div><dt className="font-medium">Data collected</dt><dd>{report.collection?.dataCollected.length ? report.collection.dataCollected.join(", ") : "None recorded"}</dd></div>
+                <div><dt className="font-medium">Data unavailable</dt><dd>{report.collection?.dataUnavailable.length ? report.collection.dataUnavailable.join(", ") : "No unavailable fields recorded"}</dd></div>
+                {report.collection?.failureReason && <div className="sm:col-span-2"><dt className="font-medium">Failure reason</dt><dd>{report.collection.failureReason}</dd></div>}
+                {report.collection?.nextAction && <div className="sm:col-span-2"><dt className="font-medium">Recommended next action</dt><dd>{report.collection.nextAction}</dd></div>}
+              </dl>
               {!report.evidenceCount && <p className="mt-3 text-sm font-medium text-blue-950">No profile data was obtained. Add authorized profile text, screenshots, or exported information and run a combined investigation.</p>}
             </div>
           </div>
@@ -85,6 +101,11 @@ export default function ResultsPage() {
               ))}
             </ul>
           ) : <p className="mt-3 text-sm text-purple-700">No evidence was attached.</p>}
+        </section>
+
+        <section className="mb-6 rounded-2xl border border-purple-100 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-bold text-purple-950">Investigation stages</h2>
+          {report.statusHistory?.length ? <ol className="mt-4 flex flex-wrap gap-2">{report.statusHistory.map((event, index) => <li key={`${event.status}-${index}`} className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium capitalize text-purple-800">{event.status.replaceAll("_", " ")} · {formatDate(event.at)}</li>)}</ol> : <p className="mt-2 text-sm text-purple-700">This older report did not record stage transitions.</p>}
         </section>
 
         <section className="mb-6 rounded-2xl border border-purple-100 bg-white p-6 shadow-sm">

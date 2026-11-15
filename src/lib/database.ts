@@ -116,11 +116,41 @@ export async function saveInvestigation(userId: string, report: InvestigationRep
 
 export async function getInvestigation(userId: string, id: string) {
   const item = (await readState()).investigations.find((entry) => entry.userId === userId && entry.report.investigationId === id);
-  return item?.report ?? null;
+  return item ? normalizeLegacyReport(item.report) : null;
 }
 
 export async function listInvestigations(userId: string) {
-  return (await readState()).investigations.filter((entry) => entry.userId === userId).map((entry) => entry.report).sort((a, b) => b.generatedAt.localeCompare(a.generatedAt));
+  return (await readState()).investigations.filter((entry) => entry.userId === userId).map((entry) => normalizeLegacyReport(entry.report)).sort((a, b) => b.generatedAt.localeCompare(a.generatedAt));
+}
+
+/** Old persisted reports could say "completed" with no findings and no collector details. */
+function normalizeLegacyReport(report: InvestigationReport): InvestigationReport {
+  const savedFailure = report.collectionErrors?.[0]
+    ?? report.limitations.find((item) => /instagram|linkedin|collector|collection|provider|API/i.test(item));
+  const provider = report.platform === "instagram" ? "Meta Instagram Graph API Business Discovery" : "LinkedIn member/profile API";
+  const missingConfig = Boolean(savedFailure && /not configured|no authorized|missing.*token|credential/i.test(savedFailure));
+  const collection = report.collection ?? {
+    provider: report.collectionMethod === "user_provided" && !savedFailure ? "None (legacy evidence-only report)" : provider,
+    attempted: Boolean(savedFailure && !missingConfig),
+    response: savedFailure
+      ? missingConfig ? `Provider was not called because configuration was missing: ${savedFailure}` : `Legacy report recorded a provider limitation: ${savedFailure}`
+      : "This saved report did not record a collection attempt or provider response.",
+    dataCollected: report.evidenceSources.filter((source) => source.source === "official_api").map((source) => source.kind),
+    dataUnavailable: report.collectionMethod === "user_provided" && !savedFailure ? ["Profile collection outcome was not recorded"] : [],
+    ...(savedFailure ? { failureReason: savedFailure } : {}),
+    nextAction: savedFailure
+      ? "Retry in automatic or combined mode after configuring an authorized provider, or supply authorized evidence."
+      : "Rerun in automatic or combined mode to record a real collection attempt and outcome.",
+  };
+  const specialistAgents = report.agents.filter((agent) => !["evidence-verification", "investigation-orchestrator", "report-generation"].includes(agent.agent));
+  const hasFinding = report.findings.length > 0;
+  const hasAgentFailure = specialistAgents.some((agent) => agent.status === "failed");
+  const status = !hasFinding && hasAgentFailure && specialistAgents.every((agent) => agent.status !== "completed")
+    ? "failed" as const
+    : !hasFinding ? "blocked" as const
+    : report.collectionStatus === "partial" || report.collectionStatus === "unavailable" || hasAgentFailure ? "partially_completed" as const
+    : "completed" as const;
+  return { ...report, collection, collectionErrors: savedFailure ? [savedFailure] : report.collectionErrors ?? [], status, completedStatus: status };
 }
 
 export const sessionCookieName = COOKIE_NAME;

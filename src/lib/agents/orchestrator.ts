@@ -53,7 +53,9 @@ export async function orchestrateInvestigation(
   // and evidence checks are never represented as invisible work.
   agentOutputs.push({ agent: "evidence-verification", status: "completed", summary: `Validated evidence references for ${findings.length} finding(s).`, findings: [], limitations: [] });
   agentOutputs.push({ agent: "investigation-orchestrator", status: "completed", summary: `Routed ${context.evidence.length} evidence item(s) to applicable agents; independent failures were isolated.`, findings: [], limitations: [] });
-  agentOutputs.push({ agent: "report-generation", status: "completed", summary: `Assembled a report from ${context.evidence.length} evidence item(s) and ${findings.length} verified finding(s).`, findings: [], limitations: [] });
+  agentOutputs.push(findings.length
+    ? { agent: "report-generation", status: "completed", summary: `Assembled a report from ${context.evidence.length} evidence item(s) and ${findings.length} verified finding(s).`, findings: [], limitations: [] }
+    : { agent: "report-generation", status: "skipped", summary: "Blocked: no evidence-backed observation was produced, so this is an investigation failure report rather than a successful findings report.", findings: [], limitations: ["No verified observation was available to present as a finding."] });
 
   return {
     investigationId: context.investigationId,
@@ -73,10 +75,10 @@ export async function orchestrateInvestigation(
 
 function skippedReason(name: string, context: InvestigationContext): string {
   if (name === "profile-intelligence") return "Skipped: no profile text evidence was collected or submitted.";
-  if (name === "content-intelligence") return "Skipped: no caption or post text was collected or submitted.";
-  if (name === "professional-intelligence") return "Skipped: no LinkedIn professional evidence was available.";
+  if (name === "content-intelligence") return "Skipped: no analyzable text was collected or submitted.";
+  if (name === "professional-intelligence") return "Skipped: no experience, education, skills, or certification evidence was available.";
   if (name === "image-intelligence") return "Skipped: no image evidence, external AI consent, or configured multimodal provider was available.";
-  if (name === "toxicity-language") return "Skipped: caption text, external analysis consent, or a configured classifier was unavailable.";
+  if (name === "toxicity-language") return "Skipped: analyzable text, external analysis consent, or a configured classifier was unavailable.";
   if (name === "evidence-observation") return context.externalProviderConsent
     ? "Skipped: no configured text model or analyzable text evidence was available."
     : "Skipped: external AI processing consent was not enabled.";

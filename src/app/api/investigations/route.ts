@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { normalizeProfileInput, ProfileInputError, type SocialPlatform } from "../../../lib/profile-input.ts";
 import { InstagramCollector, LinkedInCollector } from "../../../lib/investigation/collectors.ts";
-import type { EvidenceRecord } from "../../../lib/investigation/types.ts";
+import type { CollectionSummary, EvidenceRecord, InvestigationReport, InvestigationStatus } from "../../../lib/investigation/types.ts";
 import { orchestrateInvestigation } from "../../../lib/agents/orchestrator.ts";
 import { getSessionUser, saveInvestigation, sessionToken } from "../../../lib/database.ts";
 
@@ -86,9 +86,25 @@ export async function POST(request: Request): Promise<Response> {
 
     const externalProviderConsent = form.get("externalProviderConsent") === "true";
     if (form.get("permissionConfirmed") !== "true") return json({ error: "Confirm that you have permission to submit this material for investigation." }, 400);
+    const statusHistory: NonNullable<InvestigationReport["statusHistory"]> = [
+      { status: "queued", at: new Date().toISOString() },
+      { status: "collecting", at: new Date().toISOString() },
+    ];
     const collection = mode === "evidence"
-      ? { status: "unavailable" as const, method: "none" as const, evidence: [] as EvidenceRecord[], limitations: [] as string[] }
+      ? {
+          status: "unavailable" as const,
+          method: "none" as const,
+          evidence: [] as EvidenceRecord[],
+          limitations: [] as string[],
+          summary: {
+            provider: "None (evidence-only mode)", attempted: false,
+            response: "Automatic profile collection was not requested in evidence-only mode.",
+            dataCollected: [], dataUnavailable: ["Profile data (not requested in evidence-only mode)"],
+            nextAction: "Choose automatic or combined mode to request an authorized profile collection attempt.",
+          } satisfies CollectionSummary,
+        }
       : await (target.platform === "instagram" ? new InstagramCollector() : new LinkedInCollector()).collect(target);
+    statusHistory.push({ status: "analysing", at: new Date().toISOString() });
     const allEvidence = [...collection.evidence, ...evidence];
     if (allEvidence.length === 0 && mode === "evidence") {
       return json({ error: "Add profile text, captions, professional details, or an image for evidence-based analysis." }, 400);
@@ -102,6 +118,8 @@ export async function POST(request: Request): Promise<Response> {
       externalProviderConsent,
     });
 
+    report.investigationMode = mode;
+    report.collection = collection.summary;
     report.limitations = [...collection.limitations, ...report.limitations];
     report.collectionStatus = mode === "evidence" ? "evidence_provided"
       : collection.status === "complete" ? "complete"
@@ -110,7 +128,22 @@ export async function POST(request: Request): Promise<Response> {
     report.collectionMethod = collection.method === "none" ? (evidence.length ? "user_provided" : "none")
       : evidence.length ? "mixed" : collection.method;
     report.collectionErrors = collection.limitations;
-    report.completedStatus = allEvidence.length ? "completed" : "failed";
+    const specialistAgents = report.agents.filter((agent) => !["evidence-verification", "investigation-orchestrator", "report-generation"].includes(agent.agent));
+    const hasAgentFailure = specialistAgents.some((agent) => agent.status === "failed");
+    const hasFindings = report.findings.length > 0;
+    const textAvailable = allEvidence.some((item) => item.kind !== "image" && item.content.trim().length > 0);
+    const imageAvailable = allEvidence.some((item) => item.kind === "image");
+    const modelAgentSkipped = (textAvailable && specialistAgents.some((agent) => ["evidence-observation", "toxicity-language"].includes(agent.agent) && agent.status === "skipped"))
+      || (imageAvailable && specialistAgents.some((agent) => agent.agent === "image-intelligence" && agent.status === "skipped"));
+    const status: InvestigationStatus = !hasFindings && hasAgentFailure && specialistAgents.every((agent) => agent.status !== "completed")
+      ? "failed"
+      : !hasFindings ? "blocked"
+      : hasAgentFailure || modelAgentSkipped || (mode !== "evidence" && collection.status !== "complete") ? "partially_completed"
+      : "completed";
+    report.status = status;
+    report.completedStatus = status;
+    statusHistory.push({ status, at: new Date().toISOString() });
+    report.statusHistory = statusHistory;
     report.limitations = [...new Set([...collection.limitations, ...report.limitations])];
     await saveInvestigation(user.id, report);
     return json({ report }, 201);

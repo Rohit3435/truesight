@@ -8,8 +8,8 @@ The current agent layer is a typed, evidence-first orchestration scaffold. The i
 flowchart TD
   I[Investigation context] --> R{Evidence prerequisites}
   R -->|profile evidence| P[Profile intelligence]
-  R -->|caption evidence| C[Content intelligence]
-  R -->|LinkedIn professional evidence| W[Professional intelligence]
+  R -->|text evidence| C[Content intelligence]
+  R -->|professional evidence on any platform| W[Professional intelligence]
   R -->|missing evidence| S[Agent marked skipped]
   P --> V[Evidence verification]
   C --> V
@@ -27,9 +27,9 @@ The orchestrator runs eligible independent agents concurrently with `Promise.all
 ## Implemented specialists
 
 - **Profile intelligence:** reports the presence of profile text and states that it is an unverified claim.
-- **Content intelligence:** extracts literal hashtags from supplied captions. It does not infer sentiment, toxicity, intent, or personal traits.
+- **Content intelligence:** runs on non-image text and extracts literal hashtags; for captions without hashtags it records that observation. It does not infer sentiment, toxicity, intent, or personal traits.
 - **Professional intelligence:** records supplied experience, education, skill, or certification material as unverified claims.
-- **Toxicity/language classification:** optionally sends up to five supplied captions to the configured Hugging Face classifier only when the investigation explicitly records external-provider consent. It preserves model labels/probabilities as model output and marks them for human review; it does not infer a trait or risk score about the person.
+- **Toxicity/language classification:** optionally sends up to five supplied text items to the configured Hugging Face classifier only when the investigation explicitly records external-provider consent. It preserves model labels/probabilities as model output and marks them for human review; it does not infer a trait or risk score about the person.
 - **Evidence observation:** optionally uses the explicitly selected Gemini, Groq, or local Ollama provider after external-provider consent. It has a strict evidence/text limit, requires exact quotes from cited evidence, drops outputs without a matching source quote, and marks accepted observations for review.
 - **Evidence verification:** checks evidence references and preserves review status for user-provided material.
 - **Investigation orchestration:** routes by evidence availability, isolates failures, and assembles the report.
@@ -43,7 +43,7 @@ Gemini image analysis and evidence-observation are implemented behind the option
 
 Agents receive structured evidence with an ID, platform, type, content, origin, source label, and collection timestamp. Findings must cite at least one existing evidence ID. The current limited/moderate confidence field describes the narrow observation only; it does not indicate that an underlying profile claim is true. User-provided sources remain `requires_review`.
 
-There is no overall trust, authenticity, or risk score. An empty evidence set produces skipped agents and an unavailable collection status, not a negative judgment about the profile.
+There is no overall trust, authenticity, or risk score. An empty evidence set produces skipped agents and a blocked investigation status, not a negative judgment about the profile.
 
 ## Error handling and tests
 

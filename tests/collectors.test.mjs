@@ -11,7 +11,9 @@ test("Instagram collector reports missing authorized credentials clearly", async
   try {
     const result = await new InstagramCollector().collect(normalizeProfileInput("instagram", "hr__rohit"));
     assert.equal(result.status, "unavailable");
-    assert.match(result.limitations[0], /authorized Meta Instagram Graph API access token/);
+    assert.match(result.limitations[0], /was not called/);
+    assert.equal(result.summary.attempted, false);
+    assert.match(result.summary.failureReason, /INSTAGRAM_ACCESS_TOKEN/);
   } finally {
     if (token) process.env.INSTAGRAM_ACCESS_TOKEN = token;
     if (actor) process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID = actor;
@@ -68,7 +70,7 @@ test("LinkedIn collector does not treat an OAuth token as arbitrary target looku
   try {
     const result = await new LinkedInCollector().collect(normalizeProfileInput("linkedin", "https://www.linkedin.com/in/example-person/"));
     assert.equal(result.status, "unavailable");
-    assert.match(result.limitations.join(" "), /no authorized LinkedIn API\/provider/);
+    assert.match(result.limitations.join(" "), /No authorized LinkedIn API\/provider/);
   } finally {
     if (token) process.env.LINKEDIN_ACCESS_TOKEN = token;
   }

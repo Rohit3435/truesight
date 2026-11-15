@@ -157,3 +157,20 @@ test("URL intelligence reports literal links without pretending to check reputat
   assert.ok(report.agents.some((agent) => agent.agent === "evidence-verification" && agent.status === "completed"));
   assert.ok(report.agents.some((agent) => agent.agent === "report-generation" && agent.status === "completed"));
 });
+
+test("Instagram education or skills evidence executes text and professional agents independently", async () => {
+  const report = await orchestrateInvestigation({
+    ...baseContext,
+    evidence: [{
+      id: "short-education", platform: "instagram", kind: "education",
+      content: "About person", source: "user_provided", sourceLabel: "User submitted education text",
+      collectedAt: "2026-11-15T00:00:00.000Z",
+    }],
+  });
+  assert.equal(report.agents.find((agent) => agent.agent === "professional-intelligence").status, "completed");
+  assert.equal(report.agents.find((agent) => agent.agent === "content-intelligence").status, "completed");
+  assert.equal(report.findings.length, 1);
+  assert.match(report.findings[0].observation, /not contain enough detail/);
+  assert.match(report.findings[0].evidenceQuote, /About person/);
+  assert.ok(report.agents.find((agent) => agent.agent === "toxicity-language").summary.includes("Skipped"));
+});
