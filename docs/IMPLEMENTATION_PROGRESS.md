@@ -90,5 +90,6 @@ The completed work below supersedes the prototype limitations recorded in earlie
 ### Git status
 
 - Branch: `feature/truesight-functional-upgrade`.
-- Commit: pending final review and commit.
-- Push: pending commit.
+- Implementation commit: `b6db7f6` (`feat: complete authenticated profile investigation flow`).
+- Push: successful to `origin/feature/truesight-functional-upgrade`.
+- Follow-up progress record: pending commit and push.
