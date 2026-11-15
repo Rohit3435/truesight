@@ -93,6 +93,7 @@ The completed work below supersedes the prototype limitations recorded in earlie
 - Implementation commit: `b6db7f6` (`feat: complete authenticated profile investigation flow`).
 - Push: successful to `origin/feature/truesight-functional-upgrade`.
 - Progress record commit: `6dcd0e6` (`docs: record functional upgrade verification and blockers`), pushed successfully; working tree clean.
+- Empty-report correction commit: `b5585e0` (`fix: block empty reports and run available evidence agents`), pushed successfully to `origin/feature/truesight-functional-upgrade`; working tree clean.
 
 ## Empty-report pipeline correction
 
