@@ -92,4 +92,4 @@ The completed work below supersedes the prototype limitations recorded in earlie
 - Branch: `feature/truesight-functional-upgrade`.
 - Implementation commit: `b6db7f6` (`feat: complete authenticated profile investigation flow`).
 - Push: successful to `origin/feature/truesight-functional-upgrade`.
-- Follow-up progress record: pending commit and push.
+- Progress record commit: `6dcd0e6` (`docs: record functional upgrade verification and blockers`), pushed successfully; working tree clean.
